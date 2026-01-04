@@ -13,3 +13,9 @@
 10 ---> React Hook Form --- Done
 11 ---> React Hook dotenv --- Done
 12 ---> React Hook Framer Motion --- Done
+13 ---> Tanstack Query
+14 ---> Sweet Alert
+15 ---> Marquee 
+16 ---> Swiper and Slider
+17 ---> Leaflet ---> Map
+18 ---> 
