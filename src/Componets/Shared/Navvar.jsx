@@ -38,10 +38,10 @@ const Navvar = () => {
   // All Nav Items
   const navItems = [
     { name: "Home", path: "/", icon: <Home size={16} /> },
-    { name: "Services", path: "/services", icon: <Zap size={16} /> },
     { name: "Coverage", path: "/coverage", icon: <Map size={16} /> },
     { name: "About Us", path: "/about", icon: <Info size={16} /> },
     { name: "Pricing", path: "/pricing", icon: <DollarSign size={16} /> },
+    { name: "Send a Percel", path: "/services", icon: <Zap size={16} /> },
     { name: "Be a Rider", path: "/rider", icon: <Bike size={16} /> },
   ];
 
