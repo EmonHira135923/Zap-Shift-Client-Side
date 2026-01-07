@@ -6,6 +6,7 @@ import Home from "../Pages/Home.jsx";
 import ErrorPage from "../Pages/ErrorPage.jsx";
 import Coverages from "../Pages/Coverages.jsx";
 import AuthLayout from "../layout/AuthLayout.jsx";
+import Aboutus from "../Pages/Aboutus.jsx";
 
 const Router = createBrowserRouter([
   {
@@ -15,6 +16,7 @@ const Router = createBrowserRouter([
     children: [
       { index: true, Component: Home },
       { path: "coverage", Component: Coverages },
+      { path: "about", Component: Aboutus },
     ],
   },
   {
