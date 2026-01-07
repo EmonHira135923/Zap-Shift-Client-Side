@@ -1,8 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { TypeAnimation } from "react-type-animation";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Truck,
+  Package,
+  Clock,
+  MapPin,
+  Shield,
+  ChevronLeft,
+  ChevronRight,
+  Zap,
+  Play,
+  Pause,
+} from "lucide-react";
 
 const Banner = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
   const slides = [
     {
@@ -11,6 +25,12 @@ const Banner = () => {
         "Enjoy fast, reliable parcel delivery with real-time tracking and zero hassle. From personal packages to business shipments - we deliver on time, every time.",
       cta1: "Track Your Parcel",
       cta2: "Be A Rider",
+      icon: <Truck className="w-5 h-5" />,
+      stats: [
+        { value: "30 Min", label: "Fastest Delivery" },
+        { value: "99.9%", label: "Success Rate" },
+      ],
+      gradient: "from-blue-600 to-cyan-500",
       image:
         "https://images.unsplash.com/photo-1578575437130-527eed3abbec?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
       imageAlt: "Parcel delivery",
@@ -18,9 +38,15 @@ const Banner = () => {
     {
       title: ["Fastest Delivery", "& Easy Pickup"],
       description:
-        "Enjoy fast, reliable parcel delivery with real-time tracking and zero hassle. From personal packages to business shipments — we deliver on time, every time.",
-      cta1: "Track Your Parcel",
-      cta2: "Be A Rider",
+        "Experience lightning-fast deliveries with our optimized routes and dedicated riders. Get your packages delivered in record time across the city.",
+      cta1: "Book Delivery",
+      cta2: "Join as Partner",
+      icon: <Package className="w-5 h-5" />,
+      stats: [
+        { value: "5000+", label: "Daily Deliveries" },
+        { value: "98%", label: "On-time Rate" },
+      ],
+      gradient: "from-emerald-600 to-green-500",
       image:
         "https://images.unsplash.com/photo-1607082350899-7e105aa886ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80",
       imageAlt: "Bike delivery service",
@@ -28,9 +54,15 @@ const Banner = () => {
     {
       title: ["Delivery in 30 Minutes", "at your doorstep"],
       description:
-        "Enjoy fast, reliable parcel delivery with real-time tracking and zero hassle. From personal packages to business shipments — we deliver on time, every time.",
-      cta1: "Track Your Parcel",
-      cta2: "Be A Rider",
+        "Our express delivery service ensures your packages reach you within 30 minutes. Perfect for urgent deliveries and time-sensitive shipments.",
+      cta1: "Express Delivery",
+      cta2: "Schedule Pickup",
+      icon: <Clock className="w-5 h-5" />,
+      stats: [
+        { value: "24/7", label: "Service Available" },
+        { value: "4.9", label: "Customer Rating" },
+      ],
+      gradient: "from-purple-600 to-pink-500",
       image:
         "https://images.pexels.com/photos/4391478/pexels-photo-4391478.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
       imageAlt: "Doorstep delivery",
@@ -39,12 +71,14 @@ const Banner = () => {
 
   // Auto-slide functionality
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 6000); // Reduced time
-
+    let interval;
+    if (isAutoPlaying) {
+      interval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % slides.length);
+      }, 5000);
+    }
     return () => clearInterval(interval);
-  }, [slides.length]);
+  }, [isAutoPlaying, slides.length]);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -58,185 +92,314 @@ const Banner = () => {
     setCurrentSlide(index);
   };
 
+  // Animation variants
+  const slideVariants = {
+    enter: (direction) => ({
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0,
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction) => ({
+      zIndex: 0,
+      x: direction < 0 ? 1000 : -1000,
+      opacity: 0,
+    }),
+  };
+
   return (
-    <div className="relative w-full h-[400px] md:h-[500px] overflow-hidden bg-gradient-to-r from-gray-50 to-blue-50">
+    <div className="relative w-full h-[400px] md:h-[500px] lg:h-[550px] overflow-hidden bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+      {/* Simple background pattern */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-0 w-24 h-24 bg-blue-100 dark:bg-blue-900/20 rounded-full -translate-x-12 -translate-y-12"></div>
+        <div className="absolute bottom-0 right-0 w-32 h-32 bg-cyan-100 dark:bg-cyan-900/20 rounded-full translate-x-16 translate-y-16"></div>
+      </div>
+
       {/* Slides container */}
       <div className="relative w-full h-full">
-        {slides.map((slide, index) => (
-          <div
-            key={index}
-            className={`absolute w-full h-full transition-opacity duration-500 ease-in-out flex items-center ${
-              index === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0"
-            }`}
+        <AnimatePresence initial={false} custom={1}>
+          <motion.div
+            key={currentSlide}
+            custom={1}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{
+              x: { type: "spring", stiffness: 300, damping: 30 },
+              opacity: { duration: 0.2 },
+            }}
+            className="absolute w-full h-full flex items-center"
           >
             <div className="container mx-auto px-4 md:px-8 lg:px-16 w-full">
-              <div className="flex flex-col lg:flex-row items-center justify-between w-full gap-8">
-                {/* Text content - Reduced size */}
+              <div className="flex flex-col lg:flex-row items-center justify-between w-full gap-6 lg:gap-8">
+                {/* Text content */}
                 <div className="lg:w-1/2">
-                  <div className="h-32 md:h-36 lg:h-40 mb-4">
-                    {index === currentSlide && (
-                      <TypeAnimation
-                        sequence={[
-                          slide.title[0],
-                          800,
-                          slide.title[0] + "\n" + slide.title[1],
-                          800,
-                          slide.title[0] +
-                            "\n" +
-                            slide.title[1] +
-                            "\n" +
-                            slide.title[2],
-                          1500,
-                        ]}
-                        wrapper="h1"
-                        speed={40}
-                        deletionSpeed={60}
-                        repeat={0}
-                        cursor={true}
-                        className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 mb-2 leading-tight whitespace-pre-line"
-                      />
-                    )}
-                    {index !== currentSlide && (
-                      <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 mb-2 leading-tight">
-                        {slide.title.map((line, i) => (
-                          <React.Fragment key={i}>
-                            {line}
-                            <br />
-                          </React.Fragment>
-                        ))}
-                      </h1>
-                    )}
+                  {/* Badge */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-gray-800 rounded-full shadow-sm mb-4"
+                  >
+                    <div
+                      className={`p-1 rounded-md bg-gradient-to-r ${slides[currentSlide].gradient}`}
+                    >
+                      {slides[currentSlide].icon}
+                    </div>
+                    <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                      Premium Delivery
+                    </span>
+                  </motion.div>
+
+                  {/* Title with Type Animation - Smaller */}
+                  <div className="mb-3">
+                    <TypeAnimation
+                      sequence={[
+                        slides[currentSlide].title[0],
+                        600,
+                        slides[currentSlide].title[0] +
+                          " " +
+                          slides[currentSlide].title[1],
+                        600,
+                        slides[currentSlide].title[0] +
+                          " " +
+                          slides[currentSlide].title[1] +
+                          " " +
+                          slides[currentSlide].title[2],
+                        1200,
+                      ]}
+                      wrapper="h1"
+                      speed={30}
+                      deletionSpeed={40}
+                      repeat={0}
+                      cursor={true}
+                      className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100 leading-tight"
+                    />
                   </div>
 
-                  <p className="text-sm md:text-base text-gray-700 mb-6 max-w-lg leading-relaxed">
-                    {slide.description}
+                  {/* Description - Closer to title */}
+                  <p className="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-6 max-w-xl leading-relaxed">
+                    {slides[currentSlide].description}
                   </p>
 
+                  {/* Stats */}
+                  <div className="flex gap-4 mb-6">
+                    {slides[currentSlide].stats.map((stat, idx) => (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="flex items-center gap-2"
+                      >
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                        <div>
+                          <div className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
+                            {stat.value}
+                          </div>
+                          <div className="text-xs text-gray-600 dark:text-gray-400">
+                            {stat.label}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* CTA Buttons */}
                   <div className="flex flex-col sm:flex-row gap-3">
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 md:py-2.5 px-5 md:px-6 rounded-lg text-sm md:text-base transition duration-300 transform hover:scale-105 shadow-lg group">
-                      <span>{slide.cta1}</span>
-                      <span className="inline-block ml-1.5 group-hover:translate-x-1 transition-transform">
-                        →
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`relative bg-gradient-to-r ${slides[currentSlide].gradient} text-white font-semibold py-2.5 md:py-3 px-5 md:px-6 rounded-lg text-sm md:text-base shadow-lg hover:shadow-xl transition-shadow`}
+                    >
+                      <span className="flex items-center justify-center gap-2">
+                        {slides[currentSlide].cta1}
+                        <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </span>
-                    </button>
-                    <button className="bg-white hover:bg-gray-50 text-blue-700 font-semibold py-2 md:py-2.5 px-5 md:px-6 rounded-lg text-sm md:text-base border border-blue-200 transition duration-300 transform hover:scale-105 shadow-sm group">
-                      <span>{slide.cta2}</span>
-                      <span className="inline-block ml-1.5 group-hover:translate-x-1 transition-transform">
-                        →
+                    </motion.button>
+
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-blue-700 dark:text-blue-300 font-semibold py-2.5 md:py-3 px-5 md:px-6 rounded-lg text-sm md:text-base border border-blue-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-shadow"
+                    >
+                      <span className="flex items-center justify-center gap-2">
+                        {slides[currentSlide].cta2}
+                        <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </span>
-                    </button>
+                    </motion.button>
+                  </div>
+
+                  {/* Features */}
+                  <div className="flex flex-wrap gap-2 mt-6">
+                    {[
+                      { icon: <Shield className="w-3 h-3" />, text: "Secure" },
+                      {
+                        icon: <MapPin className="w-3 h-3" />,
+                        text: "Tracking",
+                      },
+                      { icon: <Clock className="w-3 h-3" />, text: "24/7" },
+                    ].map((feature, idx) => (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: idx * 0.1 }}
+                        className="flex items-center gap-1.5 px-2 py-1.5 bg-white dark:bg-gray-800 rounded-md shadow-sm text-xs"
+                      >
+                        <div className="text-blue-600 dark:text-blue-400">
+                          {feature.icon}
+                        </div>
+                        <span className="text-gray-700 dark:text-gray-300">
+                          {feature.text}
+                        </span>
+                      </motion.div>
+                    ))}
                   </div>
                 </div>
 
-                {/* Image content - Reduced size */}
+                {/* Image content */}
                 <div className="lg:w-1/2 flex justify-center lg:justify-end">
                   <div className="relative w-full max-w-md">
-                    <div className="absolute -top-3 -right-3 w-24 h-24 bg-blue-100 rounded-full opacity-40"></div>
-                    <div className="absolute -bottom-3 -left-3 w-20 h-20 bg-blue-200 rounded-full opacity-40"></div>
-                    <img
-                      src={slide.image}
-                      alt={slide.imageAlt}
-                      className="relative z-10 w-full h-auto max-h-[220px] md:max-h-[280px] object-contain rounded-lg shadow-lg"
-                    />
-
-                    {/* Animated delivery info */}
-                    {index === currentSlide && (
-                      <div className="absolute -bottom-1 -right-1 bg-white/90 rounded-lg p-2 shadow-md z-20">
-                        <div className="flex items-center gap-1.5">
-                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                          <span className="text-xs font-medium text-gray-800">
-                            Live Tracking
-                          </span>
-                        </div>
+                    {/* Floating badges */}
+                    <motion.div
+                      animate={{ y: [0, -5, 0] }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                      className="absolute -top-3 -right-3 bg-white dark:bg-gray-800 rounded-lg p-2 shadow-lg z-20"
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                        <span className="text-xs font-bold text-gray-900 dark:text-white">
+                          Live
+                        </span>
                       </div>
-                    )}
+                    </motion.div>
+
+                    <motion.div
+                      animate={{ y: [0, 5, 0] }}
+                      transition={{ duration: 4, repeat: Infinity, delay: 1 }}
+                      className="absolute -bottom-3 -left-3 bg-white dark:bg-gray-800 rounded-lg p-2 shadow-lg z-20"
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <Zap className="w-3 h-3 text-yellow-500" />
+                        <span className="text-xs font-bold text-gray-900 dark:text-white">
+                          30 Min
+                        </span>
+                      </div>
+                    </motion.div>
+
+                    {/* Main image */}
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.6 }}
+                      className="relative z-10"
+                    >
+                      <div className="relative overflow-hidden rounded-xl shadow-xl">
+                        <img
+                          src={slides[currentSlide].image}
+                          alt={slides[currentSlide].imageAlt}
+                          className="w-full h-auto max-h-[220px] md:max-h-[280px] object-cover rounded-xl"
+                        />
+                      </div>
+                    </motion.div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
-      {/* Navigation arrows - Smaller */}
+      {/* Navigation arrows */}
       <button
         onClick={prevSlide}
-        className="absolute left-2 md:left-3 top-1/2 transform -translate-y-1/2 bg-white/95 hover:bg-white text-gray-700 p-1.5 md:p-2 rounded-full shadow-md z-20 transition duration-300 hover:scale-105"
+        onMouseEnter={() => setIsAutoPlaying(false)}
+        onMouseLeave={() => setIsAutoPlaying(true)}
+        className="absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 p-2 rounded-full shadow-lg z-30 transition-all duration-300 hover:scale-110"
         aria-label="Previous slide"
       >
-        <svg
-          className="w-4 h-4 md:w-5 md:h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 19l-7-7 7-7"
-          />
-        </svg>
+        <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
       </button>
 
       <button
         onClick={nextSlide}
-        className="absolute right-2 md:right-3 top-1/2 transform -translate-y-1/2 bg-white/95 hover:bg-white text-gray-700 p-1.5 md:p-2 rounded-full shadow-md z-20 transition duration-300 hover:scale-105"
+        onMouseEnter={() => setIsAutoPlaying(false)}
+        onMouseLeave={() => setIsAutoPlaying(true)}
+        className="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 p-2 rounded-full shadow-lg z-30 transition-all duration-300 hover:scale-110"
         aria-label="Next slide"
       >
-        <svg
-          className="w-4 h-4 md:w-5 md:h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 5l7 7-7 7"
-          />
-        </svg>
+        <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
       </button>
 
-      {/* Slide indicators - Smaller */}
-      <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-1.5 md:space-x-2 z-20">
+      {/* Slide indicators */}
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-1.5 z-30">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full transition-all duration-300 ${
-              index === currentSlide
-                ? "bg-blue-600 w-4 md:w-6"
-                : "bg-gray-300 hover:bg-gray-400"
-            }`}
-            aria-label={`Go to slide ${index + 1}`}
-          />
+            onMouseEnter={() => setIsAutoPlaying(false)}
+            onMouseLeave={() => setIsAutoPlaying(true)}
+            className="relative"
+          >
+            <div className="relative w-2 h-2">
+              <div
+                className={`absolute inset-0 rounded-full transition-all duration-300 ${
+                  index === currentSlide
+                    ? `bg-gradient-to-r ${slides[currentSlide].gradient} w-6`
+                    : "bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500"
+                }`}
+              />
+            </div>
+          </button>
         ))}
       </div>
 
-      {/* Current slide number - Smaller */}
-      <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-sm z-20">
-        <div className="flex items-center gap-1.5">
-          <span className="text-xs font-medium text-gray-700">
-            {currentSlide + 1}/{slides.length}
-          </span>
-          <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+      {/* Current slide counter */}
+      <div className="absolute top-4 right-4 bg-white dark:bg-gray-800 rounded-lg px-3 py-1.5 shadow-md z-30">
+        <div className="flex items-center gap-2">
+          <div className="flex">
+            <span className="text-xs font-bold text-gray-900 dark:text-white">
+              {currentSlide + 1}
+            </span>
+            <span className="text-xs text-gray-500 dark:text-gray-400 mx-1">
+              /
+            </span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              {slides.length}
+            </span>
+          </div>
+          <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
         </div>
       </div>
 
-      {/* Delivery Stats - Smaller */}
-      <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-sm z-20 hidden md:block">
-        <div className="text-xs font-medium text-gray-700">
-          <span className="text-blue-600">🚚</span> 5000+ Deliveries
+      {/* Delivery Stats */}
+      <div className="absolute bottom-4 left-4 bg-white dark:bg-gray-800 rounded-lg p-2 shadow-md z-30 hidden md:block">
+        <div className="flex items-center gap-2">
+          <Truck className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+          <div>
+            <div className="text-xs font-bold text-gray-900 dark:text-white">
+              5000+ Daily
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Background decorative elements - Lighter */}
-      <div className="absolute bottom-0 right-0 w-1/4 h-1/4 bg-blue-100 rounded-full -translate-x-1/4 translate-y-1/4 opacity-20"></div>
-      <div className="absolute top-0 left-0 w-1/5 h-1/5 bg-blue-100 rounded-full -translate-x-1/4 -translate-y-1/4 opacity-20"></div>
+      {/* Auto-play toggle */}
+      <button
+        onClick={() => setIsAutoPlaying(!isAutoPlaying)}
+        className="absolute top-4 left-4 bg-white dark:bg-gray-800 rounded-lg p-1.5 shadow-md z-30"
+        title={isAutoPlaying ? "Pause auto-slide" : "Play auto-slide"}
+      >
+        {isAutoPlaying ? (
+          <Pause className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+        ) : (
+          <Play className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+        )}
+      </button>
     </div>
   );
 };

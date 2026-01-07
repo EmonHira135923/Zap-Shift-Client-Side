@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Menu, X, House, Info, LogIn, UserPlus } from "lucide-react";
+import { Menu, X, House, Info, LogIn, UserPlus, Map } from "lucide-react";
 import { NavLink } from "react-router";
 
 const Navvar = () => {
@@ -11,19 +11,19 @@ const Navvar = () => {
   // Public Nav Items
   const publicItems = [
     { name: "Home", path: "/", icon: <House size={18} /> },
+    { name: "Coverage", path: "/coverage", icon: <Map size={18} /> },
     { name: "About Us", path: "/about", icon: <Info size={18} /> },
   ];
 
   // Auth based Nav Items
   const authItems = [
-        { name: "Login", path: "/login", icon: <LogIn size={18} /> },
-        { name: "Register", path: "/register", icon: <UserPlus size={18} /> },
-      ];
+    { name: "Login", path: "/login", icon: <LogIn size={18} /> },
+    { name: "Register", path: "/register", icon: <UserPlus size={18} /> },
+  ];
 
   return (
     <nav className="p-5 bg-gray-50 shadow-md">
       <div className="flex justify-between items-center text-xl font-bold">
-
         {/* Logo & Mobile Toggle */}
         <div className="flex items-center gap-2">
           <div className="md:hidden">

@@ -4,78 +4,122 @@ const Logo = () => {
   const logos = [
     {
       name: "CASIO",
-      logo: <div className="text-2xl font-bold text-gray-800">CASIO</div>,
+      logo: (
+        <div className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+          CASIO
+        </div>
+      ),
     },
     {
       name: "Amazon",
-      logo: <div className="text-2xl font-bold text-blue-600">Amazon</div>,
+      logo: (
+        <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+          Amazon
+        </div>
+      ),
     },
     {
       name: "eSmoonstan",
-      logo: <div className="text-xl font-bold text-purple-600">eSmoonstan</div>,
+      logo: (
+        <div className="text-xl font-bold text-purple-600 dark:text-purple-400">
+          eSmoonstan
+        </div>
+      ),
     },
     {
       name: "STAR+",
       logo: (
-        <div className="text-2xl font-bold text-red-600">
-          STAR<span className="text-blue-500">+</span>
+        <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+          STAR<span className="text-blue-500 dark:text-blue-300">+</span>
         </div>
       ),
     },
     {
       name: "Startpeople",
-      logo: <div className="text-xl font-bold text-green-600">Startpeople</div>,
+      logo: (
+        <div className="text-xl font-bold text-green-600 dark:text-green-400">
+          Startpeople
+        </div>
+      ),
     },
     {
       name: "Randstad",
-      logo: <div className="text-2xl font-bold text-orange-600">Randstad</div>,
+      logo: (
+        <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+          Randstad
+        </div>
+      ),
     },
     {
       name: "Microsoft",
-      logo: <div className="text-2xl font-bold text-blue-700">Microsoft</div>,
+      logo: (
+        <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">
+          Microsoft
+        </div>
+      ),
     },
     {
       name: "Google",
-      logo: <div className="text-2xl font-bold text-red-500">Google</div>,
+      logo: (
+        <div className="text-2xl font-bold text-red-500 dark:text-red-300">
+          Google
+        </div>
+      ),
     },
     {
       name: "FedEx",
-      logo: <div className="text-2xl font-bold text-purple-800">FedEx</div>,
+      logo: (
+        <div className="text-2xl font-bold text-purple-800 dark:text-purple-300">
+          FedEx
+        </div>
+      ),
     },
     {
       name: "UPS",
-      logo: <div className="text-2xl font-bold text-yellow-600">UPS</div>,
+      logo: (
+        <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+          UPS
+        </div>
+      ),
     },
     {
       name: "DHL",
-      logo: <div className="text-2xl font-bold text-red-500">DHL</div>,
+      logo: (
+        <div className="text-2xl font-bold text-red-500 dark:text-red-300">
+          DHL
+        </div>
+      ),
     },
   ];
 
   return (
-    <section className="py-12 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
+    <section className="py-12 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 overflow-hidden">
       <div className="container mx-auto px-4">
         {/* Title */}
         <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-gray-100">
             We've helped thousands of{" "}
-            <span className="text-blue-600">sales teams</span>
+            <span className="text-blue-600 dark:text-blue-400">
+              sales teams
+            </span>
           </h2>
-          <p className="text-gray-600 mt-2">Trusted by companies worldwide</p>
+          <p className="text-gray-600 dark:text-gray-300 mt-2">
+            Trusted by companies worldwide
+          </p>
         </div>
 
         {/* Marquee Container */}
         <div className="relative overflow-hidden">
           {/* Gradient Overlays */}
-          <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-gray-50 to-transparent z-10"></div>
-          <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-gray-50 to-transparent z-10"></div>
+          <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-gray-50 dark:from-gray-900 to-transparent z-10"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-gray-50 dark:from-gray-900 to-transparent z-10"></div>
 
           {/* First Marquee */}
           <div className="flex animate-marquee whitespace-nowrap py-6">
             {[...logos, ...logos].map((company, index) => (
               <div
                 key={index}
-                className="mx-6 md:mx-8 flex-shrink-0 bg-white rounded-xl px-8 py-4 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-gray-100"
+                className="mx-6 md:mx-8 flex-shrink-0 bg-white dark:bg-gray-800 rounded-xl px-8 py-4 shadow-md hover:shadow-lg dark:shadow-gray-900/50 dark:hover:shadow-gray-900 transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 dark:border-gray-700"
               >
                 {company.logo}
               </div>
@@ -87,7 +131,7 @@ const Logo = () => {
             {[...logos].reverse().map((company, index) => (
               <div
                 key={index}
-                className="mx-6 md:mx-8 flex-shrink-0 bg-white rounded-xl px-8 py-4 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-gray-100"
+                className="mx-6 md:mx-8 flex-shrink-0 bg-white dark:bg-gray-800 rounded-xl px-8 py-4 shadow-md hover:shadow-lg dark:shadow-gray-900/50 dark:hover:shadow-gray-900 transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 dark:border-gray-700"
               >
                 <div className="opacity-80">{company.logo}</div>
               </div>
@@ -97,21 +141,37 @@ const Logo = () => {
 
         {/* Stats */}
         <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-          <div className="text-center bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <div className="text-3xl font-bold text-blue-600">10K+</div>
-            <div className="text-gray-600 mt-1">Companies</div>
+          <div className="text-center bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+              10K+
+            </div>
+            <div className="text-gray-600 dark:text-gray-300 mt-1">
+              Companies
+            </div>
           </div>
-          <div className="text-center bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <div className="text-3xl font-bold text-green-600">50K+</div>
-            <div className="text-gray-600 mt-1">Sales Teams</div>
+          <div className="text-center bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+              50K+
+            </div>
+            <div className="text-gray-600 dark:text-gray-300 mt-1">
+              Sales Teams
+            </div>
           </div>
-          <div className="text-center bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <div className="text-3xl font-bold text-purple-600">100+</div>
-            <div className="text-gray-600 mt-1">Countries</div>
+          <div className="text-center bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+              100+
+            </div>
+            <div className="text-gray-600 dark:text-gray-300 mt-1">
+              Countries
+            </div>
           </div>
-          <div className="text-center bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-            <div className="text-3xl font-bold text-orange-600">99%</div>
-            <div className="text-gray-600 mt-1">Satisfaction Rate</div>
+          <div className="text-center bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+            <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">
+              99%
+            </div>
+            <div className="text-gray-600 dark:text-gray-300 mt-1">
+              Satisfaction Rate
+            </div>
           </div>
         </div>
       </div>
