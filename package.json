@@ -16,6 +16,7 @@
     "axios": "^1.13.0",
     "dayjs": "^1.11.19",
     "dotenv": "^17.2.3",
+    "firebase": "^12.7.0",
     "framer-motion": "^12.24.10",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.548.0",
