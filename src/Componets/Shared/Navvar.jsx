@@ -194,9 +194,6 @@ const Navvar = () => {
   const getUserImage = () => {
     if (user.photoURL) return user.photoURL;
 
-    console.log("from image check", user.photoURL);
-    console.log("from user check", user.displayName);
-
     // You can add logic to determine gender or use email hash
     const emailHash = user?.email
       ?.split("")

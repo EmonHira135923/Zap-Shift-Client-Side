@@ -10,6 +10,7 @@ import Aboutus from "../Pages/Aboutus.jsx";
 import Services from "../Pages/Services.jsx";
 import Pricing from "../Pages/Pricing.jsx";
 import BeRider from "../Pages/BeRider.jsx";
+import PrivateRouter from "./PrivateRouter.jsx";
 
 const Router = createBrowserRouter([
   // Root Layout
@@ -20,10 +21,17 @@ const Router = createBrowserRouter([
     children: [
       { index: true, Component: Home },
       { path: "services", Component: Services },
-      { path: "coverage", Component: Coverages },
+      { path: "rider", Component: Coverages },
       { path: "about", Component: Aboutus },
       { path: "pricing", Component: Pricing },
-      { path: "rider", Component: BeRider },
+      {
+        path: "coverage",
+        element: (
+          <PrivateRouter>
+            <BeRider />
+          </PrivateRouter>
+        ),
+      },
     ],
   },
   // Auth Layout

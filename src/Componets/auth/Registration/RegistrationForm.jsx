@@ -89,11 +89,8 @@ const Register = () => {
         // step: 2
         const formData = new FormData();
         formData.append("image", profileimg);
-        console.log("photo", formData);
 
         const image_url = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_APIKEY}`;
-
-        console.log("image_url", image_url);
 
         // step: 3
         axios
@@ -105,8 +102,12 @@ const Register = () => {
             };
 
             updateUser(userProfile)
-              .then(() => {
-                toast.success("User Update successfully");
+              .then((res) => {
+                toast.success(
+                  `Registration Successful! Welcome ${res?.displayName}`
+                );
+                reset();
+                navigate(location?.state || "/auth/login");
               })
               .catch(() => {
                 toast.success("User not Updated");
@@ -115,10 +116,6 @@ const Register = () => {
           .catch(() => {
             toast.error("Photo url not upload!!!");
           });
-
-        toast.success(`Registration Successful! Welcome ${data.name}`);
-        reset();
-        navigate("/auth/login");
       })
       .catch((err) => {
         toast.error(err?.message || "Registration failed");
@@ -130,7 +127,7 @@ const Register = () => {
     try {
       const result = await googleUser();
       toast.success(`Google Registration Successful! ${result?.displayName}`);
-      navigate("/");
+      navigate(location?.state || "/");
     } catch (err) {
       toast.error(err?.message || "Google registration failed");
     }
@@ -215,6 +212,7 @@ const Register = () => {
               <motion.div variants={itemVariants} className="mb-8">
                 <div className="flex items-center justify-between mb-6">
                   <NavLink
+                    state={location?.state}
                     to="/auth/login"
                     className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   >

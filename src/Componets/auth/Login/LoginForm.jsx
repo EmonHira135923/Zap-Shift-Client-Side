@@ -24,7 +24,7 @@ import { useForm } from "react-hook-form";
 
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router"; // Fixed import
+import { useLocation, useNavigate } from "react-router"; // Fixed import
 import { Link } from "react-router"; // Added for navigation
 import useAuth from "../../hooks/useAuth";
 
@@ -68,6 +68,7 @@ const LoginForm = () => {
   } = useForm();
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   // AuthContexts value
 
@@ -80,7 +81,7 @@ const LoginForm = () => {
         `Login successful! Welcome ${res?.user?.displayName || ""}`
       );
       reset();
-      navigate("/");
+      navigate(location?.state || "/");
     } catch (err) {
       console.error("Login error:", err);
       let errorMessage = "Login failed. Please try again.";
@@ -126,7 +127,7 @@ const LoginForm = () => {
       toast.success(
         `Login successful! Welcome ${res?.user?.displayName || ""}`
       );
-      navigate("/");
+      navigate(location?.state || "/");
     } catch (err) {
       console.error("Google login error:", err);
       let errorMessage = "Google login failed. Please try again.";
@@ -481,6 +482,7 @@ const LoginForm = () => {
                 <p className="text-gray-600 dark:text-gray-400">
                   Don't have an account?{" "}
                   <Link
+                    state={location?.state}
                     to="/auth/register"
                     className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors inline-flex items-center gap-1 group"
                   >
