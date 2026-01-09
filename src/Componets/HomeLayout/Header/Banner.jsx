@@ -111,15 +111,15 @@ const Banner = () => {
   };
 
   return (
-    <div className="relative w-full h-[400px] md:h-[500px] lg:h-[550px] overflow-hidden bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+    <div className="relative w-full bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 overflow-hidden">
       {/* Simple background pattern */}
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-0 w-24 h-24 bg-blue-100 dark:bg-blue-900/20 rounded-full -translate-x-12 -translate-y-12"></div>
-        <div className="absolute bottom-0 right-0 w-32 h-32 bg-cyan-100 dark:bg-cyan-900/20 rounded-full translate-x-16 translate-y-16"></div>
+        <div className="absolute top-0 left-0 w-16 h-16 md:w-24 md:h-24 bg-blue-100 dark:bg-blue-900/20 rounded-full -translate-x-8 md:-translate-x-12 -translate-y-8 md:-translate-y-12"></div>
+        <div className="absolute bottom-0 right-0 w-20 h-20 md:w-32 md:h-32 bg-cyan-100 dark:bg-cyan-900/20 rounded-full translate-x-10 md:translate-x-16 translate-y-10 md:translate-y-16"></div>
       </div>
 
       {/* Slides container */}
-      <div className="relative w-full h-full">
+      <div className="relative w-full">
         <AnimatePresence initial={false} custom={1}>
           <motion.div
             key={currentSlide}
@@ -132,12 +132,175 @@ const Banner = () => {
               x: { type: "spring", stiffness: 300, damping: 30 },
               opacity: { duration: 0.2 },
             }}
-            className="absolute w-full h-full flex items-center"
+            className="w-full"
           >
-            <div className="container mx-auto px-4 md:px-8 lg:px-16 w-full">
-              <div className="flex flex-col lg:flex-row items-center justify-between w-full gap-6 lg:gap-8">
-                {/* Text content */}
-                <div className="lg:w-1/2">
+            {/* Mobile Layout (Stacked: Image on top, Text below) */}
+            <div className="block md:hidden w-full min-h-[800px] flex flex-col">
+              {/* Image Section - Top */}
+              <div className="w-full h-[400px] flex items-center justify-center px-4 pt-8">
+                <div className="relative w-full max-w-md">
+                  {/* Floating badges */}
+                  <motion.div
+                    animate={{ y: [0, -5, 0] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                    className="absolute -top-2 -right-2 bg-white dark:bg-gray-800 rounded-lg p-1.5 shadow-lg z-20"
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                      <span className="text-xs font-bold text-gray-900 dark:text-white">
+                        Live
+                      </span>
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    animate={{ y: [0, 5, 0] }}
+                    transition={{ duration: 4, repeat: Infinity, delay: 1 }}
+                    className="absolute -bottom-2 -left-2 bg-white dark:bg-gray-800 rounded-lg p-1.5 shadow-lg z-20"
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <Zap className="w-3 h-3 text-yellow-500" />
+                      <span className="text-xs font-bold text-gray-900 dark:text-white">
+                        30 Min
+                      </span>
+                    </div>
+                  </motion.div>
+
+                  {/* Main image */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6 }}
+                    className="relative z-10"
+                  >
+                    <div className="relative overflow-hidden rounded-xl shadow-xl">
+                      <img
+                        src={slides[currentSlide].image}
+                        alt={slides[currentSlide].imageAlt}
+                        className="w-full h-[280px] object-cover rounded-xl"
+                      />
+                    </div>
+                  </motion.div>
+                </div>
+              </div>
+
+              {/* Text Section - Bottom */}
+              <div className="w-full h-[400px] px-4 pb-8">
+                {/* Badge */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-gray-800 rounded-full shadow-sm mb-3"
+                >
+                  <div
+                    className={`p-1 rounded-md bg-gradient-to-r ${slides[currentSlide].gradient}`}
+                  >
+                    {slides[currentSlide].icon}
+                  </div>
+                  <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                    Premium Delivery
+                  </span>
+                </motion.div>
+
+                {/* Title */}
+                <div className="mb-2">
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 leading-tight">
+                    {slides[currentSlide].title[0]}{" "}
+                    <span className="block">
+                      {slides[currentSlide].title[1]}
+                    </span>
+                    {slides[currentSlide].title[2] && (
+                      <span className="block">
+                        {slides[currentSlide].title[2]}
+                      </span>
+                    )}
+                  </h1>
+                </div>
+
+                {/* Description */}
+                <p className="text-sm text-gray-700 dark:text-gray-300 mb-4 leading-relaxed line-clamp-3">
+                  {slides[currentSlide].description}
+                </p>
+
+                {/* Stats */}
+                <div className="flex gap-4 mb-4">
+                  {slides[currentSlide].stats.map((stat, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                      className="flex items-center gap-2"
+                    >
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0"></div>
+                      <div>
+                        <div className="text-lg font-bold text-gray-900 dark:text-white">
+                          {stat.value}
+                        </div>
+                        <div className="text-xs text-gray-600 dark:text-gray-400">
+                          {stat.label}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* CTA Buttons */}
+                <div className="flex flex-col gap-2 mb-4">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`relative bg-gradient-to-r ${slides[currentSlide].gradient} text-white font-semibold py-3 px-6 rounded-lg text-sm shadow-lg hover:shadow-xl transition-shadow`}
+                  >
+                    <span className="flex items-center justify-center gap-2">
+                      {slides[currentSlide].cta1}
+                      <ChevronRight className="w-4 h-4 transition-transform" />
+                    </span>
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-blue-700 dark:text-blue-300 font-semibold py-3 px-6 rounded-lg text-sm border border-blue-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-shadow"
+                  >
+                    <span className="flex items-center justify-center gap-2">
+                      {slides[currentSlide].cta2}
+                      <ChevronRight className="w-4 h-4 transition-transform" />
+                    </span>
+                  </motion.button>
+                </div>
+
+                {/* Features */}
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { icon: <Shield className="w-3 h-3" />, text: "Secure" },
+                    { icon: <MapPin className="w-3 h-3" />, text: "Tracking" },
+                    { icon: <Clock className="w-3 h-3" />, text: "24/7" },
+                  ].map((feature, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: idx * 0.1 }}
+                      className="flex items-center gap-1.5 px-2 py-1.5 bg-white dark:bg-gray-800 rounded-md shadow-sm text-xs"
+                    >
+                      <div className="text-blue-600 dark:text-blue-400">
+                        {feature.icon}
+                      </div>
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {feature.text}
+                      </span>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Desktop Layout (Side by side: Image Right, Text Left) */}
+            <div className="hidden md:block container mx-auto px-8 lg:px-16 w-full h-[500px] lg:h-[550px] flex items-center">
+              <div className="flex flex-row items-center justify-between w-full gap-8 lg:gap-12">
+                {/* Text content - Left */}
+                <div className="w-1/2">
                   {/* Badge */}
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
@@ -154,7 +317,7 @@ const Banner = () => {
                     </span>
                   </motion.div>
 
-                  {/* Title with Type Animation - Smaller */}
+                  {/* Title with Type Animation */}
                   <div className="mb-3">
                     <TypeAnimation
                       sequence={[
@@ -176,12 +339,12 @@ const Banner = () => {
                       deletionSpeed={40}
                       repeat={0}
                       cursor={true}
-                      className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100 leading-tight"
+                      className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100 leading-tight"
                     />
                   </div>
 
-                  {/* Description - Closer to title */}
-                  <p className="text-sm md:text-base text-gray-700 dark:text-gray-300 mb-6 max-w-xl leading-relaxed">
+                  {/* Description */}
+                  <p className="text-base text-gray-700 dark:text-gray-300 mb-6 max-w-xl leading-relaxed">
                     {slides[currentSlide].description}
                   </p>
 
@@ -197,7 +360,7 @@ const Banner = () => {
                       >
                         <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
                         <div>
-                          <div className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">
+                          <div className="text-xl font-bold text-gray-900 dark:text-white">
                             {stat.value}
                           </div>
                           <div className="text-xs text-gray-600 dark:text-gray-400">
@@ -209,11 +372,11 @@ const Banner = () => {
                   </div>
 
                   {/* CTA Buttons */}
-                  <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="flex flex-row gap-3">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className={`relative bg-gradient-to-r ${slides[currentSlide].gradient} text-white font-semibold py-2.5 md:py-3 px-5 md:px-6 rounded-lg text-sm md:text-base shadow-lg hover:shadow-xl transition-shadow`}
+                      className={`relative bg-gradient-to-r ${slides[currentSlide].gradient} text-white font-semibold py-3 px-6 rounded-lg text-base shadow-lg hover:shadow-xl transition-shadow`}
                     >
                       <span className="flex items-center justify-center gap-2">
                         {slides[currentSlide].cta1}
@@ -224,7 +387,7 @@ const Banner = () => {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-blue-700 dark:text-blue-300 font-semibold py-2.5 md:py-3 px-5 md:px-6 rounded-lg text-sm md:text-base border border-blue-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-shadow"
+                      className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-blue-700 dark:text-blue-300 font-semibold py-3 px-6 rounded-lg text-base border border-blue-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-shadow"
                     >
                       <span className="flex items-center justify-center gap-2">
                         {slides[currentSlide].cta2}
@@ -261,8 +424,8 @@ const Banner = () => {
                   </div>
                 </div>
 
-                {/* Image content */}
-                <div className="lg:w-1/2 flex justify-center lg:justify-end">
+                {/* Image content - Right */}
+                <div className="w-1/2 flex justify-end">
                   <div className="relative w-full max-w-md">
                     {/* Floating badges */}
                     <motion.div
@@ -302,7 +465,7 @@ const Banner = () => {
                         <img
                           src={slides[currentSlide].image}
                           alt={slides[currentSlide].imageAlt}
-                          className="w-full h-auto max-h-[220px] md:max-h-[280px] object-cover rounded-xl"
+                          className="w-full h-[280px] lg:h-[320px] object-cover rounded-xl"
                         />
                       </div>
                     </motion.div>
@@ -373,18 +536,6 @@ const Banner = () => {
             </span>
           </div>
           <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-        </div>
-      </div>
-
-      {/* Delivery Stats */}
-      <div className="absolute bottom-4 left-4 bg-white dark:bg-gray-800 rounded-lg p-2 shadow-md z-30 hidden md:block">
-        <div className="flex items-center gap-2">
-          <Truck className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-          <div>
-            <div className="text-xs font-bold text-gray-900 dark:text-white">
-              5000+ Daily
-            </div>
-          </div>
         </div>
       </div>
 
