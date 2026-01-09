@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
+import useAuth from "../../hooks/useAuth";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -65,14 +66,19 @@ const LoginForm = () => {
     reset,
   } = useForm();
 
+  // AuthContexts value
+  const { user, loading, signin, googleUser } = useAuth();
+
   // Handle Form
-  const handleLoginForm = async (data) => {
+  const handleLoginForm = (data) => {
     setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
     console.log("Login Data:", data);
     setIsLoading(false);
     reset();
+  };
+
+  const handlegooglesignin = () => {
+    googleUser();
   };
 
   return (
@@ -167,6 +173,7 @@ const LoginForm = () => {
                 className="grid grid-cols-2 gap-4 mb-8"
               >
                 <motion.button
+                  onSubmit={handlegooglesignin}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className="group relative flex items-center justify-center gap-3 px-6 py-3.5 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 shadow-sm hover:shadow-lg"
@@ -575,29 +582,7 @@ const LoginForm = () => {
           transition={{ delay: 0.8 }}
           className="text-center mt-12 text-gray-500 dark:text-gray-400 text-sm"
         >
-          <p>© 2024 QuantumShift. All rights reserved.</p>
-          <p className="mt-2">
-            <a
-              href="#"
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              Privacy Policy
-            </a>{" "}
-            •{" "}
-            <a
-              href="#"
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              Terms of Service
-            </a>{" "}
-            •{" "}
-            <a
-              href="#"
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              Support
-            </a>
-          </p>
+          <p>© 2026 QuantumShift. All rights reserved.</p>
         </motion.div>
       </div>
     </div>

@@ -19,11 +19,13 @@ import {
   Truck,
   Package,
   Check,
+  Link,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { toast } from "react-toastify";
+import useAuth from "../../hooks/useAuth";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -77,20 +79,47 @@ const Register = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
     watch,
+    formState: { errors },
     reset,
   } = useForm();
 
+  const password = watch("password");
+
+  // Authcontext
+  const { user, loading, reg, googleUser } = useAuth();
+  const navigate = useNavigate();
+
   // Form Handle
   const handleregform = (data) => {
-    console.log("Form Submitted", data);
-    reset();
-    toast.success("Form Submited Successfully!!!");
+    reg(data.email, data.password)
+      .then((res) => {
+        toast.success(`Registration Successfully Done ${res?.email}`);
+        reset();
+        navigate("/auth/login");
+      })
+      .catch((err) => {
+        toast.error(`Error Message ${err.message}`);
+      });
   };
 
-  // Watch password value for confirmation validation
-  const password = watch("password");
+  console.log("From Registration Form ", user?.email);
+
+  if (loading) {
+    return <p className="loading loading-infinity loading-xl"></p>;
+  }
+
+  // handle googleUser
+  const handlegoogleUser = () => {
+    googleUser()
+      .then((res) => {
+        toast.success(`Google Registration Successfully Done ${res?.email}`);
+        navigate("/auth/login");
+      })
+      .catch((err) => {
+        toast.error(`Error Message ${err.message}`);
+      });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-950 flex items-center justify-center p-4 md:p-6">
@@ -124,7 +153,7 @@ const Register = () => {
               <motion.div variants={itemVariants} className="mb-8">
                 <div className="flex items-center justify-between mb-6">
                   <NavLink
-                    to="/login"
+                    to="auth/login"
                     className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors group"
                   >
                     <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -156,6 +185,7 @@ const Register = () => {
                 className="grid grid-cols-2 gap-3 mb-8"
               >
                 <button
+                  onClick={handlegoogleUser}
                   type="button"
                   className="flex items-center justify-center gap-3 px-4 py-3 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 hover:shadow-sm"
                 >
@@ -473,7 +503,7 @@ const Register = () => {
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
                   Already have an account?{" "}
                   <NavLink
-                    to="/login"
+                    to="auth/login"
                     className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                   >
                     Sign in
