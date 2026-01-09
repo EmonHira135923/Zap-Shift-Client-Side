@@ -399,7 +399,7 @@ const FAQQuestion = () => {
           <Fade triggerOnce delay={500}>
             <div className="mt-12 text-center">
               <p className="text-gray-400 mb-4">Quick Links</p>
-              <div className="flex flex-wrap justify-center gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-5 justify-center gap-6">
                 {[
                   "Privacy Policy",
                   "Terms of Service",

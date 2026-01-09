@@ -508,7 +508,7 @@ const CustomerReview = () => {
         {/* Statistics with CountUp */}
         <div ref={statsRef} className="mb-20">
           <Zoom triggerOnce>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 text-center md:text-left">
               {stats.map((stat, index) => (
                 <Tilt
                   key={index}
