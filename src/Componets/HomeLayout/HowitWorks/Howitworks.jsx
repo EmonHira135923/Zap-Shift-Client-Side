@@ -238,7 +238,7 @@ const HowItWorks = () => {
             {/* Process Line */}
             <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-emerald-500/20 dark:from-blue-500/30 dark:via-purple-500/30 dark:to-emerald-500/30 transform -translate-y-1/2"></div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 text-center md:text-left">
               {processSteps.map((step, index) => (
                 <motion.div
                   key={step.step}
