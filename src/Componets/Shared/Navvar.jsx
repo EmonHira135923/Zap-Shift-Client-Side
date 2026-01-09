@@ -15,11 +15,13 @@ import {
 } from "lucide-react";
 import { NavLink } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
+import useAuth from "../hooks/useAuth";
 
 const Navvar = () => {
   const [toggle, setToggle] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { user, Signout } = useAuth();
 
   // Listen for scroll to add shadow
   React.useEffect(() => {
@@ -29,6 +31,11 @@ const Navvar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // handle logout
+  const handlelogout = () => {
+    Signout();
+  };
 
   const activeClass =
     "bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-3 py-1.5 rounded-lg font-semibold";

@@ -7,31 +7,32 @@ import {
   Github,
   Zap,
   Shield,
-  Package,
-  Truck,
-  Smartphone,
   CheckCircle,
-  Sparkles,
-  Key,
   ArrowRight,
-  Globe,
-  Clock,
-  TrendingUp,
-  Users,
-  Award,
-  MapPin,
   ShieldCheck,
   BarChart3,
   Cloud,
   Cpu,
+  MapPin,
+  Clock,
+  Users,
+  Package,
+  Award,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
+
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router"; // Fixed import
+import { Link } from "react-router"; // Added for navigation
 import useAuth from "../../hooks/useAuth";
 
 const LoginForm = () => {
+  const { signin, googleUser, loading: authLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   // Animation variants
   const containerVariants = {
@@ -66,20 +67,100 @@ const LoginForm = () => {
     reset,
   } = useForm();
 
+  const navigate = useNavigate();
+
   // AuthContexts value
-  const { user, loading, signin, googleUser } = useAuth();
 
   // Handle Form
-  const handleLoginForm = (data) => {
+  const handleLoginForm = async (data) => {
     setIsLoading(true);
-    console.log("Login Data:", data);
-    setIsLoading(false);
-    reset();
+    try {
+      const res = await signin(data.email, data.password);
+      toast.success(`Login successful! Welcome ${res?.user?.email || ""}`);
+      reset();
+      navigate("/");
+    } catch (err) {
+      console.error("Login error:", err);
+      let errorMessage = "Login failed. Please try again.";
+
+      if (err.code) {
+        switch (err.code) {
+          case "auth/wrong-password":
+            errorMessage = "Incorrect password. Please try again.";
+            break;
+          case "auth/user-not-found":
+            errorMessage = "No account found with this email.";
+            break;
+          case "auth/invalid-email":
+            errorMessage = "Invalid email format.";
+            break;
+          case "auth/user-disabled":
+            errorMessage = "This account has been disabled.";
+            break;
+          case "auth/too-many-requests":
+            errorMessage = "Too many failed attempts. Please try again later.";
+            break;
+          case "auth/network-request-failed":
+            errorMessage = "Network error. Please check your connection.";
+            break;
+          default:
+            errorMessage = err.message || "Login failed";
+        }
+      } else {
+        errorMessage = err.message || "Login failed";
+      }
+
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handlegooglesignin = () => {
-    googleUser();
+  // Handle Google Sign In
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    try {
+      const res = await googleUser();
+      toast.success(`Login successful! Welcome ${res?.user?.email || ""}`);
+      navigate("/");
+    } catch (err) {
+      console.error("Google login error:", err);
+      let errorMessage = "Google login failed. Please try again.";
+
+      if (err.code) {
+        switch (err.code) {
+          case "auth/popup-closed-by-user":
+            errorMessage = "Sign-in popup was closed. Please try again.";
+            break;
+          case "auth/popup-blocked":
+            errorMessage = "Popup blocked. Please allow popups for this site.";
+            break;
+          case "auth/cancelled-popup-request":
+            errorMessage = "Sign-in cancelled.";
+            break;
+          case "auth/account-exists-with-different-credential":
+            errorMessage =
+              "An account already exists with a different sign-in method.";
+            break;
+          default:
+            errorMessage = err.message || "Google login failed";
+        }
+      }
+
+      toast.error(errorMessage);
+    } finally {
+      setIsGoogleLoading(false);
+    }
   };
+
+  // Show auth loading state
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="loading loading-infinity loading-lg"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-950 flex items-center justify-center p-4">
@@ -173,19 +254,24 @@ const LoginForm = () => {
                 className="grid grid-cols-2 gap-4 mb-8"
               >
                 <motion.button
-                  onSubmit={handlegooglesignin}
+                  onClick={handleGoogleSignIn}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="group relative flex items-center justify-center gap-3 px-6 py-3.5 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 shadow-sm hover:shadow-lg"
+                  disabled={isGoogleLoading || isLoading}
+                  className="group relative flex items-center justify-center gap-3 px-6 py-3.5 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 shadow-sm hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24">
-                    <path
-                      fill="#4285F4"
-                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                    />
-                  </svg>
+                  {isGoogleLoading ? (
+                    <div className="w-5 h-5 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"></div>
+                  ) : (
+                    <svg className="w-5 h-5" viewBox="0 0 24 24">
+                      <path
+                        fill="#4285F4"
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                      />
+                    </svg>
+                  )}
                   <span className="font-medium text-gray-700 dark:text-gray-300">
-                    Google
+                    {isGoogleLoading ? "Signing in..." : "Google"}
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-cyan-500/0 group-hover:from-blue-500/5 group-hover:to-cyan-500/5 rounded-xl transition-all duration-300"></div>
                 </motion.button>
@@ -193,7 +279,8 @@ const LoginForm = () => {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="group relative flex items-center justify-center gap-3 px-6 py-3.5 bg-gray-900 dark:bg-gray-950 rounded-xl hover:bg-gray-800 dark:hover:bg-gray-900 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  disabled={isGoogleLoading || isLoading}
+                  className="group relative flex items-center justify-center gap-3 px-6 py-3.5 bg-gray-900 dark:bg-gray-950 rounded-xl hover:bg-gray-800 dark:hover:bg-gray-900 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   <Github className="w-5 h-5 text-white" />
                   <span className="font-medium text-white">GitHub</span>
@@ -230,7 +317,8 @@ const LoginForm = () => {
                     </div>
                     <input
                       type="email"
-                      className="w-full pl-12 pr-4 py-3.5 bg-white/50 dark:bg-gray-900/30 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-300 group-hover:border-blue-400 backdrop-blur-sm"
+                      disabled={isLoading || isGoogleLoading}
+                      className="w-full pl-12 pr-4 py-3.5 bg-white/50 dark:bg-gray-900/30 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-300 group-hover:border-blue-400 backdrop-blur-sm disabled:opacity-70 disabled:cursor-not-allowed"
                       placeholder="you@company.com"
                       {...register("email", {
                         required: "Email is required",
@@ -257,13 +345,14 @@ const LoginForm = () => {
                   <div className="flex items-center justify-between mb-3">
                     <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
                       <span className="flex items-center gap-2">
-                        <Key className="w-4 h-4" />
+                        <Lock className="w-4 h-4" />
                         Password
                       </span>
                     </label>
                     <button
                       type="button"
-                      className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                      className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors disabled:opacity-70"
+                      disabled={isLoading || isGoogleLoading}
                     >
                       Forgot password?
                     </button>
@@ -274,7 +363,8 @@ const LoginForm = () => {
                     </div>
                     <input
                       type={showPassword ? "text" : "password"}
-                      className="w-full pl-12 pr-12 py-3.5 bg-white/50 dark:bg-gray-900/30 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-300 group-hover:border-blue-400 backdrop-blur-sm"
+                      disabled={isLoading || isGoogleLoading}
+                      className="w-full pl-12 pr-12 py-3.5 bg-white/50 dark:bg-gray-900/30 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-300 group-hover:border-blue-400 backdrop-blur-sm disabled:opacity-70 disabled:cursor-not-allowed"
                       placeholder="••••••••"
                       {...register("password", {
                         required: "Password is required",
@@ -287,10 +377,11 @@ const LoginForm = () => {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center disabled:opacity-70"
                       aria-label={
                         showPassword ? "Hide password" : "Show password"
                       }
+                      disabled={isLoading || isGoogleLoading}
                     >
                       {showPassword ? (
                         <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600 transition-colors" />
@@ -321,6 +412,8 @@ const LoginForm = () => {
                         type="checkbox"
                         id="remember"
                         className="peer sr-only"
+                        disabled={isLoading || isGoogleLoading}
+                        {...register("remember")}
                       />
                       <div className="w-5 h-5 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 peer-checked:bg-gradient-to-r peer-checked:from-blue-600 peer-checked:to-cyan-500 peer-checked:border-transparent flex items-center justify-center transition-all duration-200">
                         <CheckCircle className="w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity" />
@@ -340,12 +433,15 @@ const LoginForm = () => {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     type="submit"
-                    disabled={isLoading}
-                    className="w-full group relative bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-semibold py-3.5 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                    disabled={isLoading || isGoogleLoading}
+                    className="w-full group relative bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-semibold py-3.5 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
                   >
                     <span className="relative z-10 flex items-center justify-center gap-2">
                       {isLoading ? (
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        <>
+                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                          Signing in...
+                        </>
                       ) : (
                         <>
                           Sign In
@@ -361,13 +457,13 @@ const LoginForm = () => {
               <motion.div variants={itemVariants} className="mt-8 text-center">
                 <p className="text-gray-600 dark:text-gray-400">
                   Don't have an account?{" "}
-                  <a
-                    href="#"
+                  <Link
+                    to="/auth/register"
                     className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors inline-flex items-center gap-1 group"
                   >
-                    Contact sales
+                    Sign up now
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </a>
+                  </Link>
                 </p>
               </motion.div>
 
@@ -541,16 +637,19 @@ const LoginForm = () => {
                     label: "Delivery Time Reduction",
                     value: "42%",
                     color: "bg-gradient-to-r from-green-500 to-emerald-500",
+                    width: "42%",
                   },
                   {
                     label: "Cost Savings",
                     value: "35%",
                     color: "bg-gradient-to-r from-blue-500 to-cyan-500",
+                    width: "35%",
                   },
                   {
                     label: "Carbon Footprint",
                     value: "28%",
                     color: "bg-gradient-to-r from-purple-500 to-pink-500",
+                    width: "28%",
                   },
                 ].map((metric, idx) => (
                   <div key={idx} className="space-y-2">
@@ -563,7 +662,7 @@ const LoginForm = () => {
                     <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
-                        animate={{ width: metric.value }}
+                        animate={{ width: metric.width }}
                         transition={{ duration: 1.5, delay: idx * 0.2 }}
                         className={`h-full rounded-full ${metric.color}`}
                       />

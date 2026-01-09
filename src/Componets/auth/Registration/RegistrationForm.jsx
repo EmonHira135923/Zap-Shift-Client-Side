@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Eye,
   EyeOff,
@@ -19,55 +19,60 @@ import {
   Truck,
   Package,
   Check,
-  Link,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
-import { NavLink, useNavigate } from "react-router";
+import { NavLink, useNavigate, useLocation } from "react-router";
 import { toast } from "react-toastify";
 import useAuth from "../../hooks/useAuth";
 
 const Register = () => {
+  const { user, loading, reg, googleUser } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.1,
-      },
-    },
-  };
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const itemVariants = {
-    hidden: { y: 15, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: 120,
-        damping: 15,
-      },
-    },
-  };
+  // React Hook Form
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm();
 
+  const password = watch("password");
+
+  // Dark mode global effect
+  useEffect(() => {
+    document.body.classList.toggle("dark", isDarkMode);
+  }, [isDarkMode]);
+
+  // Handle profile image
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setProfileImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size should be less than 5MB");
+      return;
     }
+
+    const validTypes = ["image/jpeg", "image/png", "image/gif"];
+    if (!validTypes.includes(file.type)) {
+      toast.error("Only JPG, PNG or GIF files are allowed");
+      return;
+    }
+
+    setProfileImage(file);
+    const reader = new FileReader();
+    reader.onloadend = () => setImagePreview(reader.result);
+    reader.readAsDataURL(file);
   };
 
   const removeImage = () => {
@@ -75,88 +80,93 @@ const Register = () => {
     setImagePreview(null);
   };
 
-  // React Hook Form
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-    reset,
-  } = useForm();
-
-  const password = watch("password");
-
-  // Authcontext
-  const { user, loading, reg, googleUser } = useAuth();
-  const navigate = useNavigate();
-
-  // Form Handle
-  const handleregform = (data) => {
-    reg(data.email, data.password)
-      .then((res) => {
-        toast.success(`Registration Successfully Done ${res?.email}`);
-        reset();
-        navigate("/auth/login");
-      })
-      .catch((err) => {
-        toast.error(`Error Message ${err.message}`);
-      });
+  // Form submission
+  const handleRegForm = async (data) => {
+    try {
+      await reg(data.email, data.password);
+      toast.success(`Registration Successful! Welcome ${data.name}`);
+      reset();
+      navigate("/auth/login");
+    } catch (err) {
+      toast.error(err?.message || "Registration failed");
+    }
   };
 
-  console.log("From Registration Form ", user?.email);
+  // Google registration
+  const handleGoogleUser = async () => {
+    try {
+      const result = await googleUser();
+      toast.success(`Google Registration Successful! ${result?.email}`);
+      navigate("/");
+    } catch (err) {
+      toast.error(err?.message || "Google registration failed");
+    }
+  };
 
+  useEffect(() => {}, [loading, navigate, user]);
+
+  // loading check
+
+  // Loading state
   if (loading) {
-    return <p className="loading loading-infinity loading-xl"></p>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="loading loading-infinity loading-lg"></div>
+      </div>
+    );
   }
 
-  // handle googleUser
-  const handlegoogleUser = () => {
-    googleUser()
-      .then((res) => {
-        toast.success(`Google Registration Successfully Done ${res?.email}`);
-        navigate("/auth/login");
-      })
-      .catch((err) => {
-        toast.error(`Error Message ${err.message}`);
-      });
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.1 },
+    },
+  };
+  const itemVariants = {
+    hidden: { y: 15, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 120, damping: 15 },
+    },
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-950 flex items-center justify-center p-4 md:p-6">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1 }}
-          className="absolute top-20 right-20 w-64 h-64 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl"
-        />
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1, delay: 0.2 }}
-          className="absolute bottom-20 left-20 w-72 h-72 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full blur-3xl"
-        />
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-950 flex items-center justify-center p-4 md:p-6 relative">
+      {/* Animated Background */}
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 1 }}
+        className="absolute top-20 right-20 w-64 h-64 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl"
+      />
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 1, delay: 0.2 }}
+        className="absolute bottom-20 left-20 w-72 h-72 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full blur-3xl"
+      />
 
       <div className="relative z-10 w-full max-w-6xl">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          {/* Left Side - Registration Form (3 columns) */}
+          {/* Registration Form */}
           <motion.div
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="lg:col-span-3 bg-white dark:bg-gray-800 rounded-2xl shadow-xl dark:shadow-2xl dark:shadow-black/30 border border-gray-100 dark:border-gray-700"
+            className="lg:col-span-3 bg-white dark:bg-gray-800 rounded-2xl shadow-xl dark:shadow-2xl border border-gray-100 dark:border-gray-700"
           >
             <div className="p-6 md:p-8 lg:p-10">
               {/* Header */}
               <motion.div variants={itemVariants} className="mb-8">
                 <div className="flex items-center justify-between mb-6">
                   <NavLink
-                    to="auth/login"
-                    className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors group"
+                    to="/auth/login"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   >
-                    <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                    <ArrowLeft className="w-4 h-4" />
                     Back to Login
                   </NavLink>
                   <div className="flex items-center gap-2">
@@ -179,14 +189,14 @@ const Register = () => {
                 </div>
               </motion.div>
 
-              {/* Social Login Buttons */}
+              {/* Social Login */}
               <motion.div
                 variants={itemVariants}
                 className="grid grid-cols-2 gap-3 mb-8"
               >
                 <button
-                  onClick={handlegoogleUser}
                   type="button"
+                  onClick={handleGoogleUser}
                   className="flex items-center justify-center gap-3 px-4 py-3 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 hover:shadow-sm"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -221,7 +231,7 @@ const Register = () => {
                 </div>
               </div>
 
-              {/* Profile Image Upload */}
+              {/* Profile Upload */}
               <motion.div variants={itemVariants} className="mb-8">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
                   Profile Picture{" "}
@@ -250,7 +260,6 @@ const Register = () => {
                       )}
                     </div>
                   </div>
-
                   <div className="flex-1">
                     <label className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg cursor-pointer transition-colors">
                       <Upload className="w-4 h-4" />
@@ -260,27 +269,21 @@ const Register = () => {
                         accept="image/*"
                         onChange={handleImageChange}
                         className="hidden"
-                        {...register("image", { required: true })}
                       />
                     </label>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                       JPG, PNG or GIF. Max 5MB
                     </p>
-                    {errors.image?.type === "required" && (
-                      <p className="text-red-500 text-sm mt-1">
-                        image must be required
-                      </p>
-                    )}
                   </div>
                 </div>
               </motion.div>
 
               {/* Registration Form */}
               <form
-                onSubmit={handleSubmit(handleregform)}
+                onSubmit={handleSubmit(handleRegForm)}
                 className="space-y-6"
               >
-                {/* Name & Phone Row */}
+                {/* Name & Phone */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <motion.div variants={itemVariants}>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -294,7 +297,13 @@ const Register = () => {
                         type="text"
                         className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                         placeholder="John Doe"
-                        {...register("name", { required: "Name is required" })}
+                        {...register("name", {
+                          required: "Name is required",
+                          minLength: {
+                            value: 2,
+                            message: "Name must be at least 2 characters",
+                          },
+                        })}
                       />
                     </div>
                     {errors.name && (
@@ -319,7 +328,7 @@ const Register = () => {
                         {...register("phone", {
                           required: "Phone number is required",
                           pattern: {
-                            value: /^[0-9+\-\s()]*$/,
+                            value: /^[+]?[0-9\s\-()]{10,15}$/,
                             message: "Please enter a valid phone number",
                           },
                         })}
@@ -382,6 +391,11 @@ const Register = () => {
                             value: 6,
                             message: "Password must be at least 6 characters",
                           },
+                          pattern: {
+                            value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
+                            message:
+                              "Password must contain uppercase, lowercase, and number",
+                          },
                         })}
                       />
                       <button
@@ -443,237 +457,75 @@ const Register = () => {
                   </motion.div>
                 </div>
 
-                {/* Terms Agreement */}
+                {/* Terms */}
                 <motion.div
                   variants={itemVariants}
-                  className="flex items-start space-x-3"
+                  className="flex items-start space-x-2"
                 >
-                  <div className="relative flex items-center h-5">
-                    <input
-                      type="checkbox"
-                      id="terms"
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                      {...register("terms", {
-                        required: "You must accept the terms and conditions",
-                      })}
-                    />
-                  </div>
+                  <input type="checkbox" id="terms" className="mt-1" required />
                   <label
                     htmlFor="terms"
                     className="text-sm text-gray-600 dark:text-gray-400"
                   >
                     I agree to the{" "}
-                    <NavLink
-                      to="/terms"
-                      className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
-                    >
-                      Terms of Service
-                    </NavLink>{" "}
-                    and{" "}
-                    <NavLink
-                      to="/privacy"
-                      className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
-                    >
-                      Privacy Policy
-                    </NavLink>
+                    <span className="text-blue-600 dark:text-blue-400">
+                      Terms and Conditions
+                    </span>
                   </label>
                 </motion.div>
-                {errors.terms && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.terms.message}
-                  </p>
-                )}
 
-                {/* Submit Button */}
+                {/* Submit */}
                 <motion.div variants={itemVariants}>
                   <button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-semibold py-3.5 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
+                    disabled={isSubmitting}
+                    className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <span className="flex items-center justify-center gap-2">
-                      Create Account
-                      <Sparkles className="w-4 h-4" />
-                    </span>
+                    {isSubmitting ? "Registering..." : "Register"}
                   </button>
                 </motion.div>
               </form>
-
-              {/* Sign In Link */}
-              <motion.div variants={itemVariants} className="mt-8 text-center">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  Already have an account?{" "}
-                  <NavLink
-                    to="auth/login"
-                    className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
-                  >
-                    Sign in
-                  </NavLink>
-                </p>
-              </motion.div>
             </div>
           </motion.div>
 
-          {/* Right Side - Benefits (2 columns) */}
+          {/* Right Info / Animation Panel */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="lg:col-span-2 space-y-6"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="lg:col-span-2 hidden lg:flex flex-col justify-center items-center text-center bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl p-10 space-y-6"
           >
-            {/* Benefits Card */}
-            <div className="bg-gradient-to-br from-blue-600 to-cyan-500 rounded-2xl p-6 md:p-8 shadow-xl">
-              <div className="space-y-8">
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-3">
-                    Why Join ZapShift?
-                  </h3>
-                  <p className="text-blue-100/90 text-sm">
-                    Unlock exclusive features for your business
-                  </p>
-                </div>
+            <motion.div variants={itemVariants}>
+              <Sparkles className="w-12 h-12 mx-auto text-blue-500" />
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mt-4">
+                Fast & Secure
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mt-2">
+                Our platform ensures your data is safe and your shipments are
+                faster than ever.
+              </p>
+            </motion.div>
 
-                <div className="space-y-6">
-                  {[
-                    {
-                      icon: <Package className="w-5 h-5" />,
-                      title: "Real-time Tracking",
-                      desc: "Live GPS tracking for all deliveries",
-                    },
-                    {
-                      icon: <Shield className="w-5 h-5" />,
-                      title: "Secure Delivery",
-                      desc: "Bank-level security for all transactions",
-                    },
-                    {
-                      icon: <Building className="w-5 h-5" />,
-                      title: "Business Tools",
-                      desc: "Dashboard for managing multiple deliveries",
-                    },
-                    {
-                      icon: <Globe className="w-5 h-5" />,
-                      title: "Wide Coverage",
-                      desc: "Service across 64+ districts",
-                    },
-                  ].map((benefit, idx) => (
-                    <div key={idx} className="flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
-                        <div className="text-white">{benefit.icon}</div>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-white text-sm mb-1">
-                          {benefit.title}
-                        </h4>
-                        <p className="text-blue-100/80 text-xs">
-                          {benefit.desc}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+            <motion.div variants={itemVariants}>
+              <Package className="w-12 h-12 mx-auto text-green-500" />
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mt-4">
+                Track Packages
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mt-2">
+                Easily track all your shipments in one place with live updates.
+              </p>
+            </motion.div>
 
-                {/* Stats */}
-                <div className="pt-6 border-t border-blue-500/30">
-                  <div className="grid grid-cols-2 gap-4">
-                    {[
-                      { value: "99.9%", label: "Success Rate" },
-                      { value: "5000+", label: "Deliveries" },
-                    ].map((stat, idx) => (
-                      <div key={idx} className="text-center">
-                        <div className="text-2xl font-bold text-white mb-1">
-                          {stat.value}
-                        </div>
-                        <div className="text-xs text-blue-200/80">
-                          {stat.label}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Testimonial Card */}
-            <div className="bg-gray-50 dark:bg-gray-800/80 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center">
-                    <Award className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">
-                      Trusted by Businesses
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      500+ companies nationwide
-                    </p>
-                  </div>
-                </div>
-
-                <div className="relative">
-                  <div className="absolute -top-3 -left-3 text-3xl text-gray-300 dark:text-gray-700">
-                    "
-                  </div>
-                  <p className="text-gray-700 dark:text-gray-300 text-sm italic pl-3">
-                    ZapShift transformed our logistics. 40% faster deliveries
-                    and 99% customer satisfaction!
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
-                  <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center">
-                    <span className="text-xs font-bold text-white">RJ</span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">
-                      Rajib Hasan
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      CEO, TechLogistics BD
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Features */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm">
-              <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
-                Quick Setup
-              </h4>
-              <div className="space-y-3">
-                {[
-                  { text: "Verify your email", completed: true },
-                  { text: "Add business details", completed: true },
-                  { text: "Set up payment method", completed: false },
-                  { text: "Start your first delivery", completed: false },
-                ].map((step, idx) => (
-                  <div key={idx} className="flex items-center gap-3">
-                    <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                        step.completed
-                          ? "bg-emerald-500 text-white"
-                          : "bg-gray-100 dark:bg-gray-700 text-gray-400"
-                      }`}
-                    >
-                      {step.completed ? (
-                        <Check className="w-3 h-3" />
-                      ) : (
-                        <span className="text-xs">{idx + 1}</span>
-                      )}
-                    </div>
-                    <span
-                      className={`text-sm ${
-                        step.completed
-                          ? "text-gray-600 dark:text-gray-300"
-                          : "text-gray-400 dark:text-gray-500"
-                      }`}
-                    >
-                      {step.text}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <motion.div variants={itemVariants}>
+              <Check className="w-12 h-12 mx-auto text-purple-500" />
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mt-4">
+                Reliable Service
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mt-2">
+                We provide dependable logistics solutions for businesses of all
+                sizes.
+              </p>
+            </motion.div>
           </motion.div>
         </div>
       </div>
