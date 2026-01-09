@@ -11,10 +11,8 @@ import {
   Camera,
   Github,
   ArrowLeft,
-  CheckCircle,
   Shield,
   Building,
-  Briefcase,
   Globe,
   Award,
   Sparkles,
@@ -24,6 +22,8 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
+import { NavLink } from "react-router";
+import { toast } from "react-toastify";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -74,13 +74,23 @@ const Register = () => {
   };
 
   // React Hook Form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    reset,
+  } = useForm();
 
-  const { register, handleSubmit } = useForm();
-
-  // Form Hanlde
+  // Form Handle
   const handleregform = (data) => {
-    console.log("Form Submited", data);
+    console.log("Form Submitted", data);
+    reset();
+    toast.success("Form Submited Successfully!!!");
   };
+
+  // Watch password value for confirmation validation
+  const password = watch("password");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-950 flex items-center justify-center p-4 md:p-6">
@@ -113,13 +123,13 @@ const Register = () => {
               {/* Header */}
               <motion.div variants={itemVariants} className="mb-8">
                 <div className="flex items-center justify-between mb-6">
-                  <a
-                    href="/login"
+                  <NavLink
+                    to="/login"
                     className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors group"
                   >
                     <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                     Back to Login
-                  </a>
+                  </NavLink>
                   <div className="flex items-center gap-2">
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg">
                       <Truck className="w-5 h-5 text-white" />
@@ -145,7 +155,10 @@ const Register = () => {
                 variants={itemVariants}
                 className="grid grid-cols-2 gap-3 mb-8"
               >
-                <button className="flex items-center justify-center gap-3 px-4 py-3 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 hover:shadow-sm">
+                <button
+                  type="button"
+                  className="flex items-center justify-center gap-3 px-4 py-3 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 hover:shadow-sm"
+                >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path
                       fill="#4285F4"
@@ -157,7 +170,10 @@ const Register = () => {
                   </span>
                 </button>
 
-                <button className="flex items-center justify-center gap-3 px-4 py-3 bg-gray-900 dark:bg-gray-950 rounded-xl hover:bg-gray-800 dark:hover:bg-gray-900 transition-colors">
+                <button
+                  type="button"
+                  className="flex items-center justify-center gap-3 px-4 py-3 bg-gray-900 dark:bg-gray-950 rounded-xl hover:bg-gray-800 dark:hover:bg-gray-900 transition-colors"
+                >
                   <Github className="w-5 h-5 text-white" />
                   <span className="font-medium text-white">GitHub</span>
                 </button>
@@ -214,11 +230,17 @@ const Register = () => {
                         accept="image/*"
                         onChange={handleImageChange}
                         className="hidden"
+                        {...register("image", { required: true })}
                       />
                     </label>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                       JPG, PNG or GIF. Max 5MB
                     </p>
+                    {errors.image?.type === "required" && (
+                      <p className="text-red-500 text-sm mt-1">
+                        image must be required
+                      </p>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -242,8 +264,14 @@ const Register = () => {
                         type="text"
                         className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                         placeholder="John Doe"
+                        {...register("name", { required: "Name is required" })}
                       />
                     </div>
+                    {errors.name && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.name.message}
+                      </p>
+                    )}
                   </motion.div>
 
                   <motion.div variants={itemVariants}>
@@ -258,8 +286,20 @@ const Register = () => {
                         type="tel"
                         className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                         placeholder="+880 1234 567890"
+                        {...register("phone", {
+                          required: "Phone number is required",
+                          pattern: {
+                            value: /^[0-9+\-\s()]*$/,
+                            message: "Please enter a valid phone number",
+                          },
+                        })}
                       />
                     </div>
+                    {errors.phone && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.phone.message}
+                      </p>
+                    )}
                   </motion.div>
                 </div>
 
@@ -276,8 +316,20 @@ const Register = () => {
                       type="email"
                       className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                       placeholder="you@example.com"
+                      {...register("email", {
+                        required: "Email is required",
+                        pattern: {
+                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                          message: "Invalid email address",
+                        },
+                      })}
                     />
                   </div>
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </motion.div>
 
                 {/* Password & Confirm Password */}
@@ -293,7 +345,14 @@ const Register = () => {
                       <input
                         type={showPassword ? "text" : "password"}
                         className="w-full pl-10 pr-10 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                        placeholder="••••••••"
+                        placeholder="Enter Your Password"
+                        {...register("password", {
+                          required: "Password is required",
+                          minLength: {
+                            value: 6,
+                            message: "Password must be at least 6 characters",
+                          },
+                        })}
                       />
                       <button
                         type="button"
@@ -307,23 +366,11 @@ const Register = () => {
                         )}
                       </button>
                     </div>
-                    <div className="mt-3 space-y-1.5">
-                      {[
-                        "At least 8 characters",
-                        "Uppercase & lowercase",
-                        "Include numbers",
-                      ].map((req, idx) => (
-                        <div
-                          key={idx}
-                          className="flex items-center gap-2 text-xs"
-                        >
-                          <Check className="w-3 h-3 text-green-500" />
-                          <span className="text-gray-500 dark:text-gray-400">
-                            {req}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
+                    {errors.password && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.password.message}
+                      </p>
+                    )}
                   </motion.div>
 
                   <motion.div variants={itemVariants}>
@@ -337,7 +384,12 @@ const Register = () => {
                       <input
                         type={showConfirmPassword ? "text" : "password"}
                         className="w-full pl-10 pr-10 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                        placeholder="••••••••"
+                        placeholder="Confirm Your Password"
+                        {...register("confirmPassword", {
+                          required: "Please confirm your password",
+                          validate: (value) =>
+                            value === password || "Passwords do not match",
+                        })}
                       />
                       <button
                         type="button"
@@ -353,6 +405,11 @@ const Register = () => {
                         )}
                       </button>
                     </div>
+                    {errors.confirmPassword && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.confirmPassword.message}
+                      </p>
+                    )}
                   </motion.div>
                 </div>
 
@@ -366,6 +423,9 @@ const Register = () => {
                       type="checkbox"
                       id="terms"
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                      {...register("terms", {
+                        required: "You must accept the terms and conditions",
+                      })}
                     />
                   </div>
                   <label
@@ -373,21 +433,26 @@ const Register = () => {
                     className="text-sm text-gray-600 dark:text-gray-400"
                   >
                     I agree to the{" "}
-                    <a
-                      href="#"
+                    <NavLink
+                      to="/terms"
                       className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
                     >
                       Terms of Service
-                    </a>{" "}
+                    </NavLink>{" "}
                     and{" "}
-                    <a
-                      href="#"
+                    <NavLink
+                      to="/privacy"
                       className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
                     >
                       Privacy Policy
-                    </a>
+                    </NavLink>
                   </label>
                 </motion.div>
+                {errors.terms && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.terms.message}
+                  </p>
+                )}
 
                 {/* Submit Button */}
                 <motion.div variants={itemVariants}>
@@ -407,12 +472,12 @@ const Register = () => {
               <motion.div variants={itemVariants} className="mt-8 text-center">
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
                   Already have an account?{" "}
-                  <a
-                    href="/login"
+                  <NavLink
+                    to="/login"
                     className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                   >
                     Sign in
-                  </a>
+                  </NavLink>
                 </p>
               </motion.div>
             </div>
