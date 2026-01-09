@@ -160,6 +160,8 @@ const Navvar = () => {
     },
   };
 
+  console.log("from user check", user);
+
   // User dropdown animation
   const userDropdownVariants = {
     hidden: { opacity: 0, y: -10, scale: 0.95 },
@@ -190,7 +192,10 @@ const Navvar = () => {
 
   // Use user's photoURL if available, else use default based on email or gender
   const getUserImage = () => {
-    if (user?.photoURL) return user.photoURL;
+    if (user.photoURL) return user.photoURL;
+
+    console.log("from image check", user.photoURL);
+    console.log("from user check", user.displayName);
 
     // You can add logic to determine gender or use email hash
     const emailHash = user?.email

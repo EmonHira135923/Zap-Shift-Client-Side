@@ -25,8 +25,9 @@ import { useForm } from "react-hook-form";
 import { NavLink, useNavigate, useLocation } from "react-router";
 import { toast } from "react-toastify";
 import useAuth from "../../hooks/useAuth";
+import axios from "axios";
 const Register = () => {
-  const { user, loading, reg, googleUser } = useAuth();
+  const { user, loading, reg, googleUser, updateUser } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
@@ -80,22 +81,55 @@ const Register = () => {
   };
 
   // Form submission
-  const handleRegForm = async (data) => {
-    try {
-      await reg(data.email, data.password);
-      toast.success(`Registration Successful! Welcome ${data.name}`);
-      reset();
-      navigate("/auth/login");
-    } catch (err) {
-      toast.error(err?.message || "Registration failed");
-    }
+  const handleRegForm = (data) => {
+    // step: 1
+    const profileimg = profileImage;
+    reg(data.email, data.password)
+      .then(() => {
+        // step: 2
+        const formData = new FormData();
+        formData.append("image", profileimg);
+        console.log("photo", formData);
+
+        const image_url = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_APIKEY}`;
+
+        console.log("image_url", image_url);
+
+        // step: 3
+        axios
+          .post(image_url, formData)
+          .then((res) => {
+            const userProfile = {
+              displayName: data.name,
+              photoURL: res.data.data.display_url,
+            };
+
+            updateUser(userProfile)
+              .then(() => {
+                toast.success("User Update successfully");
+              })
+              .catch(() => {
+                toast.success("User not Updated");
+              });
+          })
+          .catch(() => {
+            toast.error("Photo url not upload!!!");
+          });
+
+        toast.success(`Registration Successful! Welcome ${data.name}`);
+        reset();
+        navigate("/auth/login");
+      })
+      .catch((err) => {
+        toast.error(err?.message || "Registration failed");
+      });
   };
 
   // Google registration
   const handleGoogleUser = async () => {
     try {
       const result = await googleUser();
-      toast.success(`Google Registration Successful! ${result?.email}`);
+      toast.success(`Google Registration Successful! ${result?.displayName}`);
       navigate("/");
     } catch (err) {
       toast.error(err?.message || "Google registration failed");

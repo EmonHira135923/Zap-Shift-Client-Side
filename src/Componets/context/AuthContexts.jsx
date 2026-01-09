@@ -8,6 +8,7 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
+  updateProfile,
 } from "firebase/auth";
 
 const googleProvider = new GoogleAuthProvider();
@@ -40,6 +41,11 @@ const AuthContexts = ({ children }) => {
     return signInWithPopup(auth, googleProvider);
   };
 
+  // Update User
+  const updateUser = (profile) => {
+    return updateProfile(auth.currentUser, profile);
+  };
+
   // On Auth Changed
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -48,7 +54,6 @@ const AuthContexts = ({ children }) => {
     });
     return () => {
       unSubscribe();
-      57677;
     };
   }, []);
 
@@ -59,6 +64,7 @@ const AuthContexts = ({ children }) => {
     signin,
     Signout,
     googleUser,
+    updateUser,
   };
   return <Provider value={authinfo}>{children}</Provider>;
 };

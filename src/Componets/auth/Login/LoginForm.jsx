@@ -76,7 +76,9 @@ const LoginForm = () => {
     setIsLoading(true);
     try {
       const res = await signin(data.email, data.password);
-      toast.success(`Login successful! Welcome ${res?.user?.email || ""}`);
+      toast.success(
+        `Login successful! Welcome ${res?.user?.displayName || ""}`
+      );
       reset();
       navigate("/");
     } catch (err) {
@@ -121,7 +123,9 @@ const LoginForm = () => {
     setIsGoogleLoading(true);
     try {
       const res = await googleUser();
-      toast.success(`Login successful! Welcome ${res?.user?.email || ""}`);
+      toast.success(
+        `Login successful! Welcome ${res?.user?.displayName || ""}`
+      );
       navigate("/");
     } catch (err) {
       console.error("Google login error:", err);
