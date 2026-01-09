@@ -23,6 +23,7 @@ import {
   Check,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useForm } from "react-hook-form";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -70,6 +71,15 @@ const Register = () => {
   const removeImage = () => {
     setProfileImage(null);
     setImagePreview(null);
+  };
+
+  // React Hook Form
+
+  const { register, handleSubmit } = useForm();
+
+  // Form Hanlde
+  const handleregform = (data) => {
+    console.log("Form Submited", data);
   };
 
   return (
@@ -214,7 +224,10 @@ const Register = () => {
               </motion.div>
 
               {/* Registration Form */}
-              <form className="space-y-6">
+              <form
+                onSubmit={handleSubmit(handleregform)}
+                className="space-y-6"
+              >
                 {/* Name & Phone Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <motion.div variants={itemVariants}>
