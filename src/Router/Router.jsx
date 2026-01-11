@@ -11,6 +11,9 @@ import Services from "../Pages/Services.jsx";
 import Pricing from "../Pages/Pricing.jsx";
 import BeRider from "../Pages/BeRider.jsx";
 import PrivateRouter from "./PrivateRouter.jsx";
+import DashboardLayout from "../layout/DashboardLayout.jsx";
+import Mypercel from "../Pages/Dashboards/Mypercel.jsx";
+import DashBoard from "../Pages/Dashboards/Dashboard.jsx";
 
 const Router = createBrowserRouter([
   // Root Layout
@@ -49,6 +52,20 @@ const Router = createBrowserRouter([
     children: [
       { path: "login", Component: Login },
       { path: "register", Component: Registration },
+    ],
+  },
+  // Dashboard Layout
+  {
+    path: "/dashboard",
+    element: (
+      <PrivateRouter>
+        <DashboardLayout />
+      </PrivateRouter>
+    ),
+    errorElement: <ErrorPage />,
+    children: [
+      { index: true, Component: DashBoard },
+      { path: "mypercels", Component: Mypercel },
     ],
   },
 ]);
