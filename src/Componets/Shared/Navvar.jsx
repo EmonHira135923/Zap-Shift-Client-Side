@@ -79,7 +79,7 @@ const Navvar = () => {
 
   // Protected Nav Items (only visible when logged in)
   const protectedNavItems = [
-    { name: "Pricing", path: "/pricing", icon: <DollarSign size={16} /> },
+    { name: "Track Order", path: "/pricing", icon: <DollarSign size={16} /> },
     { name: "Send a Parcel", path: "/services", icon: <Package size={16} /> },
     { name: "Be a Rider", path: "/rider", icon: <Bike size={16} /> },
   ];

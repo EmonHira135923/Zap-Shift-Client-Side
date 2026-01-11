@@ -20,12 +20,19 @@ const Router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, Component: Home },
-      { path: "services", Component: Services },
-      { path: "rider", Component: Coverages },
+      { path: "services", Component: Services }, // Send a Percel
+      { path: "coverage", Component: Coverages },
       { path: "about", Component: Aboutus },
-      { path: "pricing", Component: Pricing },
       {
-        path: "coverage",
+        path: "pricing",
+        element: (
+          <PrivateRouter>
+            <Pricing />
+          </PrivateRouter>
+        ),
+      }, // Track a Order
+      {
+        path: "rider",
         element: (
           <PrivateRouter>
             <BeRider />
