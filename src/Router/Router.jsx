@@ -14,6 +14,7 @@ import PrivateRouter from "./PrivateRouter.jsx";
 import DashboardLayout from "../layout/DashboardLayout.jsx";
 import Mypercel from "../Pages/Dashboards/Mypercel.jsx";
 import DashBoard from "../Pages/Dashboards/Dashboard.jsx";
+import Payments from "../Pages/Dashboards/Payments.jsx";
 
 const Router = createBrowserRouter([
   // Root Layout
@@ -66,6 +67,7 @@ const Router = createBrowserRouter([
     children: [
       { index: true, Component: DashBoard },
       { path: "mypercels", Component: Mypercel },
+      { path: "payments/:id", Component: Payments },
     ],
   },
 ]);

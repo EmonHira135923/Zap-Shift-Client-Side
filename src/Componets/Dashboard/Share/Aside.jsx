@@ -1,16 +1,8 @@
 import React from "react";
-import {
-  Home,
-  Package,
-  Truck,
-  Settings,
-  User,
-  Bell,
-  BarChart,
-} from "lucide-react";
+import { Home, Package } from "lucide-react";
 import { NavLink, useLocation } from "react-router";
-import Mypercel from "../../../Pages/Dashboards/Mypercel";
 import { motion } from "framer-motion";
+import { MdPayments } from "react-icons/md";
 
 const Aside = ({ openAside }) => {
   const location = useLocation();
@@ -26,7 +18,11 @@ const Aside = ({ openAside }) => {
       path: "/dashboard/mypercels",
       icon: Package,
       label: "My Parcels",
-      badge: 3, // Example badge count
+    },
+    {
+      path: "/dashboard/payments/:id",
+      icon: MdPayments,
+      label: "Payment Status",
     },
   ];
 

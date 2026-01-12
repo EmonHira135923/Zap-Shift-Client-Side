@@ -1,8 +1,9 @@
 import axios from "axios";
 import React from "react";
+import Baseurl from "../utils/Baseurl";
 
 const axiosSecure = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: `${Baseurl}`,
 });
 
 const useAxiosSecure = () => {
