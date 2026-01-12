@@ -40,18 +40,6 @@ const DashboardLayout = () => {
             <Outlet />
           </div>
         </div>
-
-        {/* Footer (Optional) */}
-        <footer className="bg-gray-900/50 border-t border-gray-800/50 p-4">
-          <div className="max-w-full mx-auto text-center">
-            <p className="text-sm text-gray-500">
-              © 2024 Admin Dashboard. All rights reserved.
-            </p>
-            <p className="text-xs text-gray-600 mt-1">
-              v1.0.0 • Powered by React
-            </p>
-          </div>
-        </footer>
       </main>
 
       {/* Overlay for mobile (optional) */}

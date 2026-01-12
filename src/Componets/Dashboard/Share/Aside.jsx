@@ -26,38 +26,7 @@ const Aside = ({ openAside }) => {
       path: "/dashboard/mypercels",
       icon: Package,
       label: "My Parcels",
-      component: <Mypercel />,
       badge: 3, // Example badge count
-    },
-    {
-      path: "/dashboard/tracking",
-      icon: Truck,
-      label: "Track Parcel",
-      description: "Live Tracking",
-    },
-    {
-      path: "/dashboard/statistics",
-      icon: BarChart,
-      label: "Statistics",
-      description: "Analytics",
-    },
-    {
-      path: "/dashboard/notifications",
-      icon: Bell,
-      label: "Notifications",
-      badge: 5, // Example badge count
-    },
-    {
-      path: "/dashboard/profile",
-      icon: User,
-      label: "Profile",
-      description: "Account",
-    },
-    {
-      path: "/dashboard/settings",
-      icon: Settings,
-      label: "Settings",
-      description: "Preferences",
     },
   ];
 

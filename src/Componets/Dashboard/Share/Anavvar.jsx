@@ -61,48 +61,10 @@ const Anavvar = ({ toggleAside }) => {
         >
           <Menu className="w-5 h-5 text-gray-300 group-hover:text-white" />
         </button>
-
-        {/* Logo/Brand */}
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg shadow-blue-500/20">
-            <Zap className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              RedUp
-            </h1>
-            <p className="text-xs text-gray-400">Dashboard</p>
-          </div>
-        </div>
       </div>
 
       {/* Right Section */}
       <div className="flex items-center gap-4">
-        {/* Theme Toggle */}
-        <button
-          onClick={toggleDarkMode}
-          className="p-2.5 bg-gray-800 hover:bg-gray-700 rounded-xl transition-all duration-300 group relative"
-          title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-        >
-          {darkMode ? (
-            <Sun className="w-5 h-5 text-yellow-400 group-hover:text-yellow-300" />
-          ) : (
-            <Moon className="w-5 h-5 text-blue-400 group-hover:text-blue-300" />
-          )}
-        </button>
-
-        {/* Notifications */}
-        <div className="relative">
-          <button className="p-2.5 bg-gray-800 hover:bg-gray-700 rounded-xl transition-all duration-300 group relative">
-            <Bell className="w-5 h-5 text-gray-300 group-hover:text-white" />
-            {notifications > 0 && (
-              <span className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full border-2 border-gray-900 animate-pulse">
-                {notifications}
-              </span>
-            )}
-          </button>
-        </div>
-
         {/* Profile Section */}
         <div className="relative" ref={dropdownRef}>
           {/* Profile Button */}
@@ -155,11 +117,6 @@ const Anavvar = ({ toggleAside }) => {
                     <p className="text-sm text-gray-400 truncate">
                       {user?.email || "user@example.com"}
                     </p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs rounded-full">
-                        Premium User
-                      </span>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -174,10 +131,6 @@ const Anavvar = ({ toggleAside }) => {
                   <div className="p-2 bg-gray-700 group-hover:bg-blue-500 rounded-lg transition-all duration-200">
                     <Home className="w-4 h-4 text-gray-300 group-hover:text-white" />
                   </div>
-                  <div>
-                    <p className="font-medium text-gray-200">Home</p>
-                    <p className="text-xs text-gray-500">Return to main page</p>
-                  </div>
                 </NavLink>
 
                 <NavLink
@@ -187,24 +140,6 @@ const Anavvar = ({ toggleAside }) => {
                 >
                   <div className="p-2 bg-gray-700 group-hover:bg-purple-500 rounded-lg transition-all duration-200">
                     <User className="w-4 h-4 text-gray-300 group-hover:text-white" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-200">Profile</p>
-                    <p className="text-xs text-gray-500">View & edit profile</p>
-                  </div>
-                </NavLink>
-
-                <NavLink
-                  to="/dashboard/settings"
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-gray-700/50 transition-all duration-200 group"
-                  onClick={() => setOpen(false)}
-                >
-                  <div className="p-2 bg-gray-700 group-hover:bg-green-500 rounded-lg transition-all duration-200">
-                    <Settings className="w-4 h-4 text-gray-300 group-hover:text-white" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-200">Settings</p>
-                    <p className="text-xs text-gray-500">Account preferences</p>
                   </div>
                 </NavLink>
 
@@ -219,22 +154,7 @@ const Anavvar = ({ toggleAside }) => {
                   <div className="p-2 bg-red-500/20 group-hover:bg-red-500 rounded-lg transition-all duration-200">
                     <LogOut className="w-4 h-4 text-red-400 group-hover:text-white" />
                   </div>
-                  <div>
-                    <p className="font-medium text-red-400 group-hover:text-white">
-                      Logout
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Sign out of your account
-                    </p>
-                  </div>
                 </button>
-              </div>
-
-              {/* Footer */}
-              <div className="px-4 py-3 bg-gray-900/50 border-t border-gray-700/50">
-                <p className="text-xs text-gray-500 text-center">
-                  © 2024 RedUp Delivery. All rights reserved.
-                </p>
               </div>
             </div>
           )}
