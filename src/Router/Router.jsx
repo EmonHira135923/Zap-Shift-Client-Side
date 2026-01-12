@@ -15,6 +15,8 @@ import DashboardLayout from "../layout/DashboardLayout.jsx";
 import Mypercel from "../Pages/Dashboards/Mypercel.jsx";
 import DashBoard from "../Pages/Dashboards/Dashboard.jsx";
 import Payments from "../Pages/Dashboards/Payments.jsx";
+import PaymentSuccess from "../Pages/Dashboards/PaymentSuccess.jsx";
+import PaymentCancel from "../Pages/Dashboards/PaymentCancel.jsx";
 
 const Router = createBrowserRouter([
   // Root Layout
@@ -68,6 +70,8 @@ const Router = createBrowserRouter([
       { index: true, Component: DashBoard },
       { path: "mypercels", Component: Mypercel },
       { path: "payments/:id", Component: Payments },
+      { path: "payments/success", Component: PaymentSuccess },
+      { path: "payments/cancel", Component: PaymentCancel },
     ],
   },
 ]);
