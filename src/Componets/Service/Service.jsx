@@ -23,10 +23,12 @@ import {
 import useAuth from "../hooks/useAuth";
 import useAxiosSecure from "../hooks/useAxiosSecure";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
 
 const Service = () => {
   // axios
   const axiosSecure = useAxiosSecure();
+  const navigate = useNavigate();
   // user
   const { user } = useAuth();
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -244,6 +246,7 @@ const Service = () => {
         // console.log("Backend response:", response.data);
         setIsSubmitted(true);
         toast.success("Your Items Added in Database");
+        navigate("/dashboard/mypercels");
         // Reset form after 3 seconds
         setTimeout(() => {
           setIsSubmitted(false);

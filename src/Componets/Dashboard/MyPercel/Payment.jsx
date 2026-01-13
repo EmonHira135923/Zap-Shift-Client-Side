@@ -23,6 +23,17 @@ const Payment = () => {
       id: parcel._id,
       senderEmail: parcel.senderEmail,
       parcelName: parcel.parcelName,
+      senderRegion: parcel.senderRegion,
+      senderDistrict: parcel.senderDistrict,
+      senderName: parcel.senderName,
+      senderAddress: parcel.senderAddress,
+      senderPhone: parcel.senderPhone,
+      receiverRegion: parcel.receiverRegion,
+      receiverDistrict: parcel.receiverDistrict,
+      receiverName: parcel.receiverName,
+      receiverEmail: parcel.receiverEmail,
+      receiverAddress: parcel.receiverAddress,
+      receiverContact: parcel.receiverContact,
     };
     const res = await axiosSecure.post("/create-checkout-session", paymentInfo);
     window.location.href = res.data.result;
