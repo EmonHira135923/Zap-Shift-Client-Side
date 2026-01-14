@@ -3,6 +3,7 @@ import { Home, Package } from "lucide-react";
 import { NavLink, useLocation } from "react-router";
 import { motion } from "framer-motion";
 import { MdPayments } from "react-icons/md";
+import { FaRegCreditCard } from "react-icons/fa";
 
 const Aside = ({ openAside }) => {
   const location = useLocation();
@@ -20,9 +21,9 @@ const Aside = ({ openAside }) => {
       label: "My Parcels",
     },
     {
-      path: "/dashboard/payments/:id",
-      icon: MdPayments,
-      label: "Payment Status",
+      path: "/dashboard/payment-history",
+      icon: FaRegCreditCard,
+      label: "Payment History",
     },
   ];
 

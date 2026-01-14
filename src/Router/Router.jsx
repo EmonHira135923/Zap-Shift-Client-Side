@@ -17,6 +17,7 @@ import DashBoard from "../Pages/Dashboards/Dashboard.jsx";
 import Payments from "../Pages/Dashboards/Payments.jsx";
 import PaymentSuccess from "../Pages/Dashboards/PaymentSuccess.jsx";
 import PaymentCancel from "../Pages/Dashboards/PaymentCancel.jsx";
+import PaymentHistorys from "../Pages/Dashboards/PaymentHistorys.jsx";
 
 const Router = createBrowserRouter([
   // Root Layout
@@ -72,6 +73,7 @@ const Router = createBrowserRouter([
       { path: "payments/:id", Component: Payments },
       { path: "payments/success", Component: PaymentSuccess },
       { path: "payments/cancel", Component: PaymentCancel },
+      { path: "payment-history", Component: PaymentHistorys },
     ],
   },
 ]);
