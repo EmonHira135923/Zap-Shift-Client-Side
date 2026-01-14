@@ -26,6 +26,7 @@ import { NavLink, useNavigate, useLocation } from "react-router";
 import { toast } from "react-toastify";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 const Register = () => {
   const { user, loading, reg, googleUser, updateUser } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
@@ -36,6 +37,8 @@ const Register = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  const axiosSecure = useAxiosSecure();
 
   // React Hook Form
   const {
@@ -101,6 +104,24 @@ const Register = () => {
               photoURL: res.data.data.display_url,
             };
 
+            // create user for db
+
+            const userInfo = {
+              email: data.email,
+              displayName: data.name,
+              photoURL: res.data.data.display_url,
+            };
+
+            // step: 3 - create user for DB
+            try {
+              const res = axiosSecure.post("/register", userInfo);
+              if (res.data.result?.insertedId) {
+                console.log("User created in DB");
+              }
+            } catch (err) {
+              console.log("Error creating user:", err);
+            }
+
             updateUser(userProfile)
               .then((res) => {
                 toast.success(
@@ -123,13 +144,55 @@ const Register = () => {
   };
 
   // Google registration
-  const handleGoogleUser = async () => {
+  const handleGoogleSignIn = async () => {
     try {
-      const result = await googleUser();
-      toast.success(`Google Registration Successful! ${result?.displayName}`);
+      const res = await googleUser(); // Firebase response
+
+      const userInfo = {
+        email: res?.user?.email,
+        displayName: res?.user?.displayName,
+        photoURL: res?.user?.photoURL,
+      };
+
+      // step: create user in DB
+      try {
+        const dbRes = await axiosSecure.post("/register", userInfo);
+        if (dbRes.data.result?.insertedId) {
+          console.log("User created in DB");
+        }
+      } catch (err) {
+        console.log("Error creating user:", err);
+      }
+
+      toast.success(
+        `Login successful! Welcome ${res?.user?.displayName || ""}`
+      );
       navigate(location?.state || "/");
     } catch (err) {
-      toast.error(err?.message || "Google registration failed");
+      console.error("Google login error:", err);
+      let errorMessage = "Google login failed. Please try again.";
+
+      if (err.code) {
+        switch (err.code) {
+          case "auth/popup-closed-by-user":
+            errorMessage = "Sign-in popup was closed. Please try again.";
+            break;
+          case "auth/popup-blocked":
+            errorMessage = "Popup blocked. Please allow popups for this site.";
+            break;
+          case "auth/cancelled-popup-request":
+            errorMessage = "Sign-in cancelled.";
+            break;
+          case "auth/account-exists-with-different-credential":
+            errorMessage =
+              "An account already exists with a different sign-in method.";
+            break;
+          default:
+            errorMessage = err.message || "Google login failed";
+        }
+      }
+
+      toast.error(errorMessage);
     }
   };
 
@@ -246,7 +309,7 @@ const Register = () => {
               >
                 <button
                   type="button"
-                  onClick={handleGoogleUser}
+                  onClick={handleGoogleSignIn}
                   className="flex items-center justify-center gap-3 px-4 py-3 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 hover:shadow-sm"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">

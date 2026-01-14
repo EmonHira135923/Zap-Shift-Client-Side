@@ -160,7 +160,7 @@ const Navvar = () => {
     },
   };
 
-  console.log("from user check", user);
+  // console.log("from user check", user);
 
   // User dropdown animation
   const userDropdownVariants = {

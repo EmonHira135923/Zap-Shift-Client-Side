@@ -27,6 +27,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useLocation, useNavigate } from "react-router"; // Fixed import
 import { Link } from "react-router"; // Added for navigation
 import useAuth from "../../hooks/useAuth";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const LoginForm = () => {
   const { signin, googleUser, loading } = useAuth();
@@ -123,7 +124,24 @@ const LoginForm = () => {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      const res = await googleUser();
+      const res = await googleUser(); // Firebase response
+
+      const userInfo = {
+        email: res?.user?.email,
+        displayName: res?.user?.displayName,
+        photoURL: res?.user?.photoURL,
+      };
+
+      // step: create user in DB
+      try {
+        const dbRes = await axiosSecure.post("/register", userInfo);
+        if (dbRes.data.result?.insertedId) {
+          console.log("User created in DB");
+        }
+      } catch (err) {
+        console.log("Error creating user:", err);
+      }
+
       toast.success(
         `Login successful! Welcome ${res?.user?.displayName || ""}`
       );
