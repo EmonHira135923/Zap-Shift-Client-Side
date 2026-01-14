@@ -13,10 +13,12 @@ import {
   FaCheckCircle,
   FaTimesCircle,
 } from "react-icons/fa";
+import { useNavigate } from "react-router";
 
 const PaymentsHistory = () => {
   const axiosSecure = useAxiosSecure();
-  const { user } = useAuth();
+  const { user, Signout, signin } = useAuth();
+  const navigate = useNavigate();
 
   const {
     data: payments = [],
@@ -25,12 +27,20 @@ const PaymentsHistory = () => {
   } = useQuery({
     queryKey: ["PaymentHistory", user?.email],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/allpayments?email=${user?.email}`, {
-        headers: {
-          Authorization: `Bearer ${user?.accessToken}`,
-        },
-      });
-      return res.data.result;
+      try {
+        const res = await axiosSecure.get(`/allpayments?email=${user?.email}`, {
+          headers: {
+            Authorization: `Bearer ${user?.accessToken}`,
+          },
+        });
+        return res.data.result;
+      } catch (err) {
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          await Signout();
+          navigate("/login");
+        }
+        throw err;
+      }
     },
     enabled: !!user?.email,
   });
