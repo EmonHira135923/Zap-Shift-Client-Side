@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, Package } from "lucide-react";
+import { Bike, Home, Package } from "lucide-react";
 import { NavLink, useLocation } from "react-router";
 import { motion } from "framer-motion";
 import { MdPayments } from "react-icons/md";
@@ -24,6 +24,11 @@ const Aside = ({ openAside }) => {
       path: "/dashboard/payment-history",
       icon: FaRegCreditCard,
       label: "Payment History",
+    },
+    {
+      path: "/dashboard/all-riders",
+      icon: Bike,
+      label: "All Riders",
     },
   ];
 
