@@ -76,12 +76,12 @@ const AllRiders = () => {
 
       switch (modalData.action) {
         case "approve":
-          endpoint = `/update-rider/${modalData.rider._id}`;
+          endpoint = `/update-rider/${modalData.rider._id}/role`;
           updateData = { status: "approved" };
           successMessage = "Rider approved successfully.";
           break;
         case "reject":
-          endpoint = `/update-rider/${modalData.rider._id}`;
+          endpoint = `/update-rider/${modalData.rider._id}/role`;
           updateData = { status: "rejected" };
           successMessage = "Rider rejected successfully.";
           break;

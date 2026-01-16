@@ -4,11 +4,16 @@ import { NavLink, useLocation } from "react-router";
 import { motion } from "framer-motion";
 import { MdPayments } from "react-icons/md";
 import { FaRegCreditCard } from "react-icons/fa";
+import useRole from "../../hooks/useRole";
 
 const Aside = ({ openAside }) => {
   const location = useLocation();
+  const { role, isLoading } = useRole();
 
-  const navItems = [
+  console.log("users", role);
+
+  // Base navigation items for all users
+  const baseNavItems = [
     {
       path: "/dashboard",
       icon: Home,
@@ -25,6 +30,10 @@ const Aside = ({ openAside }) => {
       icon: FaRegCreditCard,
       label: "Payment History",
     },
+  ];
+
+  // Admin-only navigation items
+  const adminNavItems = [
     {
       path: "/dashboard/all-riders",
       icon: Bike,
@@ -36,6 +45,20 @@ const Aside = ({ openAside }) => {
       label: "All Users",
     },
   ];
+
+  // Combine navigation items based on role
+  const getNavItems = () => {
+    const items = [...baseNavItems];
+
+    // Add admin-only items if user is admin
+    if (role === "admin") {
+      items.push(...adminNavItems);
+    }
+
+    return items;
+  };
+
+  const navItems = getNavItems();
 
   return (
     <div className="h-full bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950 border-r border-gray-800/50 shadow-2xl shadow-black/30 flex flex-col">
@@ -147,6 +170,14 @@ const Aside = ({ openAside }) => {
                 <div className="absolute left-full ml-3 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 border border-gray-700 shadow-xl">
                   <div className="flex flex-col">
                     <span className="font-semibold">{item.label}</span>
+                    {/* Show admin badge in tooltip for admin-only routes */}
+                    {(item.path === "/dashboard/all-riders" ||
+                      item.path === "/dashboard/all-users") &&
+                      role === "admin" && (
+                        <span className="text-xs text-red-400 mt-1">
+                          Admin Only
+                        </span>
+                      )}
                     {item.description && (
                       <span className="text-xs text-gray-400">
                         {item.description}

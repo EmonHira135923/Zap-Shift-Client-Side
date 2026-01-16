@@ -20,6 +20,8 @@ import PaymentCancel from "../Pages/Dashboards/PaymentCancel.jsx";
 import PaymentHistorys from "../Pages/Dashboards/PaymentHistorys.jsx";
 import Rider from "../Pages/Dashboards/Riders/Rider.jsx";
 import User from "../Pages/Dashboards/Users/User.jsx";
+import AdminRouter from "./AdminRouter.jsx";
+import ForbiddenPage from "../Componets/Shared/ForbiddenPage.jsx";
 
 const Router = createBrowserRouter([
   // Root Layout
@@ -68,7 +70,7 @@ const Router = createBrowserRouter([
         <DashboardLayout />
       </PrivateRouter>
     ),
-    errorElement: <ErrorPage />,
+    errorElement: <ForbiddenPage />,
     children: [
       { index: true, Component: DashBoard },
       { path: "mypercels", Component: Mypercel },
@@ -76,8 +78,22 @@ const Router = createBrowserRouter([
       { path: "payments/success", Component: PaymentSuccess },
       { path: "payments/cancel", Component: PaymentCancel },
       { path: "payment-history", Component: PaymentHistorys },
-      { path: "all-riders", Component: Rider },
-      { path: "all-users", Component: User },
+      {
+        path: "all-riders",
+        element: (
+          <AdminRouter>
+            <Rider />
+          </AdminRouter>
+        ),
+      },
+      {
+        path: "all-users",
+        element: (
+          <AdminRouter>
+            <User />
+          </AdminRouter>
+        ),
+      },
     ],
   },
 ]);

@@ -88,7 +88,7 @@ const Users = () => {
     try {
       const updateUser = { role: "admin" };
       const res = await axiosSecure.patch(
-        `/update-user/${makeAdminModal.user._id}`,
+        `/update-user/${makeAdminModal.user._id}/role`,
         updateUser,
         {
           headers: {
@@ -117,7 +117,7 @@ const Users = () => {
     try {
       const updateUser = { role: "user" };
       const res = await axiosSecure.patch(
-        `/update-user/${makeUserModal.user._id}`,
+        `/update-user/${makeUserModal.user._id}/role`,
         updateUser,
         {
           headers: {
