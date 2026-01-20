@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
@@ -49,34 +49,32 @@ const Users = () => {
     user: null,
   });
 
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchText, setSearchText] = useState(""); // input text
+  const [searchTerm, setSearchTerm] = useState(""); // debounced text
   const [roleFilter, setRoleFilter] = useState("all");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchTerm(searchText);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchText]);
 
   const {
     data: users = [],
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["users"],
+    queryKey: ["users", searchTerm, roleFilter],
     queryFn: async () => {
-      const res = await axiosSecure.get("/users", {
-        headers: {
-          Authorization: `Bearer ${currentUser?.accessToken}`,
-        },
-      });
+      const res = await axiosSecure.get(
+        `/users?searchTerm=${searchTerm}&roleFilter=${roleFilter}`,
+        { headers: { Authorization: `Bearer ${currentUser?.accessToken}` } }
+      );
       return res.data.result;
     },
-  });
-
-  // Filter users based on search and role
-  const filteredUsers = users.filter((user) => {
-    const matchesSearch =
-      user.displayName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesRole = roleFilter === "all" || user.role === roleFilter;
-
-    return matchesSearch && matchesRole;
+    refetchOnWindowFocus: false,
   });
 
   // Handle Make Admin
@@ -210,8 +208,8 @@ const Users = () => {
                   <input
                     type="text"
                     placeholder="Search users..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
                     className="pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:border-transparent w-full sm:w-64"
                   />
                 </div>
@@ -223,7 +221,6 @@ const Users = () => {
                     size={20}
                   />
                   <select
-                    value={roleFilter}
                     onChange={(e) => setRoleFilter(e.target.value)}
                     className="pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-lime-500 focus:border-transparent appearance-none w-full sm:w-48"
                   >
@@ -259,7 +256,8 @@ const Users = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredUsers.map((user) => (
+                  {/* FIXED: Changed filteredUsers to users */}
+                  {users.map((user) => (
                     <tr
                       key={user._id}
                       className="border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors"
@@ -426,14 +424,15 @@ const Users = () => {
               </table>
 
               {/* Empty State */}
-              {filteredUsers.length === 0 && (
+              {/* FIXED: Changed filteredUsers to users */}
+              {users.length === 0 && (
                 <div className="py-16 text-center">
                   <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gray-900/50 flex items-center justify-center">
                     <User className="text-gray-600" size={40} />
                   </div>
                   <h3 className="text-xl text-gray-400 mb-2">No Users Found</h3>
                   <p className="text-gray-500 max-w-md mx-auto">
-                    {searchTerm || roleFilter !== "all"
+                    {searchText || roleFilter !== "all"
                       ? "Try adjusting your search or filter criteria"
                       : "No users have been registered yet."}
                   </p>
@@ -445,18 +444,20 @@ const Users = () => {
             <div className="px-6 py-4 border-t border-gray-700 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="text-sm text-gray-500">
                 Showing{" "}
-                <span className="text-white font-medium">
-                  {filteredUsers.length}
-                </span>{" "}
-                of{" "}
                 <span className="text-white font-medium">{users.length}</span>{" "}
                 users
               </div>
               <div className="flex items-center gap-2">
-                <button className="px-4 py-2 text-sm rounded-lg bg-gray-900/50 text-gray-400 hover:text-white border border-gray-700 transition-colors">
+                <button
+                  className="px-4 py-2 text-sm rounded-lg bg-gray-900/50 text-gray-400 hover:text-white border border-gray-700 transition-colors disabled:opacity-50"
+                  disabled
+                >
                   Previous
                 </button>
-                <button className="px-4 py-2 text-sm rounded-lg bg-gray-900/50 text-gray-400 hover:text-white border border-gray-700 transition-colors">
+                <button
+                  className="px-4 py-2 text-sm rounded-lg bg-gray-900/50 text-gray-400 hover:text-white border border-gray-700 transition-colors disabled:opacity-50"
+                  disabled
+                >
                   Next
                 </button>
               </div>

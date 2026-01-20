@@ -152,9 +152,9 @@ const PaymentsHistory = () => {
                     {formatCurrency(
                       payments.reduce(
                         (sum, payment) => sum + (payment.totalCost || 0),
-                        0
+                        0,
                       ),
-                      payments[0]?.currency
+                      payments[0]?.currency,
                     )}
                   </p>
                 </div>
@@ -185,7 +185,7 @@ const PaymentsHistory = () => {
                       ? formatCurrency(
                           payments.reduce((sum, p) => sum + p.totalCost, 0) /
                             payments.length,
-                          payments[0]?.currency
+                          payments[0]?.currency,
                         )
                       : "$0.00"}
                   </p>

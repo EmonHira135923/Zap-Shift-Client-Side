@@ -1,5 +1,5 @@
 import React from "react";
-import { Bike, Home, Package, Users } from "lucide-react";
+import { Bike, BikeIcon, Home, Package, Users } from "lucide-react";
 import { NavLink, useLocation } from "react-router";
 import { motion } from "framer-motion";
 import { MdPayments } from "react-icons/md";
@@ -38,6 +38,11 @@ const Aside = ({ openAside }) => {
       path: "/dashboard/all-riders",
       icon: Bike,
       label: "All Riders",
+    },
+    {
+      path: "/dashboard/assign-rider",
+      icon: BikeIcon,
+      label: "Assign Rider",
     },
     {
       path: "/dashboard/all-users",

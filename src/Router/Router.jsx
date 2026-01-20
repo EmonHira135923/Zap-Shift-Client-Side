@@ -22,6 +22,7 @@ import Rider from "../Pages/Dashboards/Riders/Rider.jsx";
 import User from "../Pages/Dashboards/Users/User.jsx";
 import AdminRouter from "./AdminRouter.jsx";
 import ForbiddenPage from "../Componets/Shared/ForbiddenPage.jsx";
+import AssignRiders from "../Pages/Dashboards/Riders/AssignRiders.jsx";
 
 const Router = createBrowserRouter([
   // Root Layout
@@ -91,6 +92,14 @@ const Router = createBrowserRouter([
         element: (
           <AdminRouter>
             <User />
+          </AdminRouter>
+        ),
+      },
+      {
+        path: "assign-rider",
+        element: (
+          <AdminRouter>
+            <AssignRiders />
           </AdminRouter>
         ),
       },

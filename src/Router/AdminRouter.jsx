@@ -13,7 +13,7 @@ const AdminRouter = ({ children }) => {
     return children;
   }
 
-  console.log("role from ", role);
+  // console.log("role from ", role);
 
   return <ForbiddenPage />;
 };
